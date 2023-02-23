@@ -19,9 +19,9 @@ lista_nomes_arquivos_teste = Access_Folder()[4]['name']
 dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
 data = pd.to_datetime(dados[0]['Hora'])
 coluna_1, coluna_2, coluna_3 = st.columns(3)
-filtro_ano = coluna_1.selectbox('Ano:', options=data.dt.year.drop_duplicates())
-filtro_mes = coluna_2.selectbox('Mês:', options=data[data.dt.year == filtro_ano].dt.month.drop_duplicates())
-filtro_dia = coluna_3.selectbox('Dia:', options=data[data.dt.month == filtro_mes].dt.day.drop_duplicates())
+filtro_ano = coluna_1.selectbox('Ano:', options=data.dt.year.drop_duplicates(), index=(len(data.dt.year.drop_duplicates()))-1)
+filtro_mes = coluna_2.selectbox('Mês:', options=data[data.dt.year == filtro_ano].dt.month.drop_duplicates(), index=(len(data[data.dt.year == filtro_ano].dt.month.drop_duplicates()))-1)
+filtro_dia = coluna_3.selectbox('Dia:', options=data[data.dt.month == filtro_mes].dt.day.drop_duplicates(), index=(len(data[data.dt.month == filtro_mes].dt.day.drop_duplicates()))-1)
 
 filtro_data = data[data.dt.year == filtro_ano][data.dt.month == filtro_mes][data.dt.day == filtro_dia].reset_index(drop=True)
 escolher_parametros_eletricos = st.radio('', ['Escolher quais parâmetros plotar.', 'Plotar todos os parâmetros.'], horizontal=True)
