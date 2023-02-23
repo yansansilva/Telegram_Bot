@@ -7,4 +7,3 @@ plotly==5.13.0
 scipy==1.7.3
 streamlit==1.18.1
 XlsxWriter==3.0.8
-pip==23.0.1
