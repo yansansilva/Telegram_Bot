@@ -44,7 +44,7 @@ def import_from_GoogleDrive():
 
     return dados_modulo, dados_inversor, dados_ambiente
 
-@st.cache_data(ttl=300)
+@st.cache_data
 def Access_Folder():
     cred_file = Credentials.from_service_account_info(st.secrets["gcp_service_account_2"], scopes=["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/spreadsheets",],)
     service = build('drive', 'v3', credentials=cred_file)
@@ -77,9 +77,10 @@ def import_from_GoogleSheets(lista_arquivos_teste):
 def plot_graficos(parametros_eletricos, dados, nome_arquivo, filtro_data):
     import plotly.graph_objs as go
     fig = go.Figure()
+    dados['Hora'] = pd.to_datetime(dados['Hora'])
+    periodo = (dados['Hora'] >= filtro_data.min()) & (dados['Hora'] <= filtro_data.max())
     for parametro_eletrico in parametros_eletricos:
-        fig.add_trace(go.Line(x=filtro_data, y=dados[parametro_eletrico], name=parametro_eletrico))
-
+        fig.add_trace(go.Line(x=filtro_data, y=dados[periodo][parametro_eletrico], name=parametro_eletrico))
     fig.update_layout(
         title=f'Dados de {nome_arquivo}',
         title_x=0.25, title_y=0.85,
