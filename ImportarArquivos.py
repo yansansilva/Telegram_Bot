@@ -44,7 +44,7 @@ def import_from_GoogleDrive():
 
     return dados_modulo, dados_inversor, dados_ambiente
 
-@st.cache_data
+@st.cache_data(ttl=300)
 def Access_Folder():
     cred_file = Credentials.from_service_account_info(st.secrets["gcp_service_account_2"], scopes=["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/spreadsheets",],)
     service = build('drive', 'v3', credentials=cred_file)
