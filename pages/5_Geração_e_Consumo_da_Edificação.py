@@ -9,17 +9,14 @@ st.set_page_config(
     page_icon="👋",
     layout="wide"
 )
-
-if st.button('Limpar cache'):
-    st.caching.clear_cache()
-    st.experimental_rerun()
-    
+  
 lista_nomes_arquivos_climatizacao = Access_Folder()[0]['name']
 lista_nomes_arquivos_equipamentos = Access_Folder()[1]['name']
 lista_nomes_arquivos_iluminacao = Access_Folder()[2]['name']
 lista_nomes_arquivos_geral = Access_Folder()[3]['name']
 lista_nomes_arquivos_teste = Access_Folder()[4]['name']
 
+atualizar_dados = st.button()
 dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
 data = pd.to_datetime(dados[0]['Hora'])
 coluna_1, coluna_2, coluna_3 = st.columns(3)
@@ -45,3 +42,5 @@ if parametros_eletricos != []:
     divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[4], lista_nomes_arquivos_teste[4], filtro_data))
     divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[5], lista_nomes_arquivos_teste[5], filtro_data))
     divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[6], lista_nomes_arquivos_teste[6], filtro_data))
+if atualizar_button():
+    dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
