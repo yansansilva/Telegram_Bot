@@ -17,11 +17,10 @@ lista_nomes_arquivos_geral = Access_Folder()[3]['name']
 lista_nomes_arquivos_teste = Access_Folder()[4]['name']
 
 def clear_cache():
-    st.legacy_caching.caching.clear_cache()
-st.sidebar.button("Refresh Program",on_click=clear_cache)
+    from streamlit.runtime.caching import cache_data_api
+    cache_data_api.CachedFunc.clear(import_from_GoogleSheets)
 
-#if st.button('Atualizar Dados'):
-#    st.caching
+st.sidebar.button("Atualizar Dados",on_click=clear_cache)
 
 dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
 data = pd.to_datetime(dados[0]['Hora'])
