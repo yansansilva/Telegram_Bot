@@ -63,7 +63,7 @@ def Access_Folder():
         df.append(pd.DataFrame(files))
     return df
 
-@st.cache_data#(ttl=300)
+#@st.cache_data(ttl=300)
 def import_from_GoogleSheets(lista_arquivos_teste):
     # Arquivos de dados de medição importados da nuvem
     resultado = []
