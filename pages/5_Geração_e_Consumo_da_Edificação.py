@@ -10,8 +10,9 @@ st.set_page_config(
     layout="wide"
 )
 
-if st.button('Limpar cache e refresh'):
-    streamlit.experimental_rerun()
+if st.button('Limpar cache'):
+    st.caching.clear_cache()
+    st.experimental_rerun()
     
 lista_nomes_arquivos_climatizacao = Access_Folder()[0]['name']
 lista_nomes_arquivos_equipamentos = Access_Folder()[1]['name']
