@@ -43,5 +43,5 @@ if parametros_eletricos != []:
     divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[5], lista_nomes_arquivos_teste[5], filtro_data))
     divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[6], lista_nomes_arquivos_teste[6], filtro_data))
     
-if atualizar_button:
+if atualizar_dados:
     dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
