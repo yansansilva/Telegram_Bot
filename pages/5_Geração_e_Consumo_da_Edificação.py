@@ -18,7 +18,7 @@ lista_nomes_arquivos_teste = Access_Folder()[4]['name']
 
 def clear_cache():
     from streamlit.runtime.caching import cache_data_api
-    cache_data_api.CachedFunc.clear(import_from_GoogleSheets)
+    cache_data_api.CachedFunc.clear(manual_import_from_GoogleSheets)
 
 if st.sidebar.checkbox('Atualizar Dados Manualmente'):
     st.sidebar.button("Atualizar Dados",on_click=clear_cache)
