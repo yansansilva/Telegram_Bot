@@ -20,7 +20,7 @@ def clear_cache():
     from streamlit.runtime.caching import cache_data_api
     cache_data_api.CachedFunc.clear(import_from_GoogleSheets)
 
-if st.sidebar.checkbox('Atualizar Dados Manualmente')
+if st.sidebar.checkbox('Atualizar Dados Manualmente'):
     st.sidebar.button("Atualizar Dados",on_click=clear_cache)
     dados = manual_import_from_GoogleSheets(lista_nomes_arquivos_teste)
 else:
