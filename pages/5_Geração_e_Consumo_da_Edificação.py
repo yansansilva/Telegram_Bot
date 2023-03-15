@@ -43,17 +43,17 @@ else:
 
 divisao_tela1, divisao_tela2, divisao_tela3 = st.columns((2.75, 0.5, 2.75))
 
-#if parametros_eletricos != []:
+if parametros_eletricos != []:
 #    for i in range(len(lista_nomes_arquivos_teste)):
 #        if i%2 == 0:
 #            divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[i], lista_nomes_arquivos_teste[i], filtro_data))
 #        else:
 #            divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[i], lista_nomes_arquivos_teste[i], filtro_data))
     
-divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[0], lista_nomes_arquivos_teste[0], filtro_data))
-divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[1], lista_nomes_arquivos_teste[1], filtro_data))
-divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[2], lista_nomes_arquivos_teste[2], filtro_data))
-divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[3], lista_nomes_arquivos_teste[3], filtro_data))
-divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[4], lista_nomes_arquivos_teste[4], filtro_data))
-divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[5], lista_nomes_arquivos_teste[5], filtro_data))
-divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[6], lista_nomes_arquivos_teste[6], filtro_data))
+    divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[0], lista_nomes_arquivos_teste[0], filtro_data))
+    divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[1], lista_nomes_arquivos_teste[1], filtro_data))
+    divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[2], lista_nomes_arquivos_teste[2], filtro_data))
+    divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[3], lista_nomes_arquivos_teste[3], filtro_data))
+    divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[4], lista_nomes_arquivos_teste[4], filtro_data))
+    divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[5], lista_nomes_arquivos_teste[5], filtro_data))
+    divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[6], lista_nomes_arquivos_teste[6], filtro_data))
