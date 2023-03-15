@@ -72,7 +72,7 @@ def Access_Folder():
     return df
 
 @st.cache_data
-def manual_import_from_GoogleSheets(lista_arquivos_teste):
+def import_from_GoogleSheets(lista_arquivos_teste):
     # Arquivos de dados de medição importados da nuvem
     resultado = []
     for arquivo in lista_arquivos_teste:
@@ -80,17 +80,6 @@ def manual_import_from_GoogleSheets(lista_arquivos_teste):
                 "https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive", ], )).open(
                 arquivo).worksheet('Sheet1').get_all_records()))
     return resultado
-
-@st.cache_data(ttl=300)
-def auto_import_from_GoogleSheets(lista_arquivos_teste):
-    # Arquivos de dados de medição importados da nuvem
-    resultado = []
-    for arquivo in lista_arquivos_teste:
-        resultado.append(pd.DataFrame(gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account_2"], scopes=[
-                "https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive", ], )).open(
-                arquivo).worksheet('Sheet1').get_all_records()))
-    return resultado
-
 
 #@st.experimental_memo
 def plot_graficos(parametros_eletricos, dados, nome_arquivo, filtro_data):
