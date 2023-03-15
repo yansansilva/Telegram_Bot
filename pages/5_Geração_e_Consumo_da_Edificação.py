@@ -22,8 +22,8 @@ def clear_cache():
 
 dados = pd.DataFrame()
 if st.sidebar.checkbox('Atualizar Dados Manualmente'):
-    st.sidebar.button("Atualizar Dados",on_click=clear_cache)
     dados = manual_import_from_GoogleSheets(lista_nomes_arquivos_teste)
+    st.sidebar.button("Atualizar Dados",on_click=clear_cache)
 else:
     dados = auto_import_from_GoogleSheets(lista_nomes_arquivos_teste)
 
