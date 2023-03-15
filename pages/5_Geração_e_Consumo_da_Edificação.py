@@ -18,16 +18,11 @@ lista_nomes_arquivos_teste = Access_Folder()[4]['name']
 
 def clear_cache():
     from streamlit.runtime.caching import cache_data_api
-    cache_data_api.CachedFunc.clear(manual_import_from_GoogleSheets)
+    cache_data_api.CachedFunc.clear(import_from_GoogleSheets)
 
-dados = pd.DataFrame()
-if st.sidebar.checkbox('Atualizar Dados Manualmente'):
-    st.sidebar.button("Atualizar Dados",on_click=clear_cache)
-    dados = manual_import_from_GoogleSheets(lista_nomes_arquivos_teste)
-else:
-    dados = auto_import_from_GoogleSheets(lista_nomes_arquivos_teste)
+st.sidebar.button("Atualizar Dados",on_click=clear_cache)
 
-#dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
+dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
 data = pd.to_datetime(dados[0]['Hora'])
 coluna_1, coluna_2, coluna_3 = st.columns(3)
 filtro_ano = coluna_1.selectbox('Ano:', options=data.dt.year.drop_duplicates(), index=(len(data.dt.year.drop_duplicates()))-1)
