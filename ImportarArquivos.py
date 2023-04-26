@@ -47,7 +47,7 @@ def import_from_GoogleDrive():
     for planilha in range(len(planilhas_ambiente)):
     	Amb = pd.concat([Amb, pd.DataFrame(planilhas_ambiente[planilha].get_all_records(empty2zero=True)[1:])])
     ambiente = Amb.set_axis(planilhas_ambiente[0].get_values()[0], axis='columns').reset_index(drop=True)
-    ambiente[ambiente.columns[0]] = pd.to_datetime(ambiente[ambiente.columns[0]])
+    ambiente[ambiente.columns[0]] = pd.to_datetime(ambiente[ambiente.columns[0]], dayfirst=True)
     dados_ambiente = ambiente[ambiente != 0].dropna().reset_index(drop=True)
 
     return dados_modulo, dados_inversor, dados_ambiente
