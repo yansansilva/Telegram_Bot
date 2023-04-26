@@ -42,7 +42,7 @@ with tabs[0]:
     else:
         dados_modulo, dados_inversor, dados_ambiente = import_from_GoogleDrive()
         dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
-        dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
+        dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
         Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
         Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
         # correspondentes ao zero de irradiância
