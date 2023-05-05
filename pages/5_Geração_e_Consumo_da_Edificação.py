@@ -26,9 +26,9 @@ dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
 
 incluir_demanda_ativa = st.checkbox('Calcular/Incluir Demanda Ativa')
 if incluir_demanda_ativa:
-    for i in range(6):
+    for i in range(7):
         st.write(i)
-        dados[i]['Demanda Ativa A'], dados[i]['Demanda Ativa B'], dados[i]['Demanda Ativa C'] = [dados[i]['Potência Ativa A'] * 5/60, dados[i]['Potência Ativa B'] * 5/60, dados[i]['Potência Ativa C'] * 5/60]
+        #dados[i]['Demanda Ativa A'], dados[i]['Demanda Ativa B'], dados[i]['Demanda Ativa C'] = [dados[i]['Potência Ativa A'] * 5/60, dados[i]['Potência Ativa B'] * 5/60, dados[i]['Potência Ativa C'] * 5/60]
     #dados[0]['Demanda Ativa A'], dados[0]['Demanda Ativa B'], dados[0]['Demanda Ativa C'] = dados[0]['Potência Ativa A'] * 5/60, dados[0]['Potência Ativa B'] * 5/60, dados[0]['Potência Ativa C'] * 5/60
     #dados[1]['Demanda Ativa A'], dados[1]['Demanda Ativa B'], dados[1]['Demanda Ativa C'] = dados[1]['Potência Ativa A'] * 5/60, dados[1]['Potência Ativa B'] * 5/60, dados[1]['Potência Ativa C'] * 5/60
     #dados[2]['Demanda Ativa A'], dados[2]['Demanda Ativa B'], dados[2]['Demanda Ativa C'] = dados[2]['Potência Ativa A'] * 5/60, dados[2]['Potência Ativa B'] * 5/60, dados[2]['Potência Ativa C'] * 5/60
