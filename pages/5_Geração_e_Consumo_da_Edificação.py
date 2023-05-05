@@ -23,6 +23,21 @@ def clear_cache():
 st.sidebar.button("Atualizar Dados",on_click=clear_cache)
 
 dados = import_from_GoogleSheets(lista_nomes_arquivos_teste)
+
+incluir_demanda_ativa = st.checkbox('Calcular/Incluir Demanda Ativa')
+if incluir_demanda_ativa:
+    dados['Demanda Ativa A'] = dados['Potência Ativa A'] * 5/60
+    dados['Demanda Ativa B'] = dados['Potência Ativa B'] * 5/60
+    dados['Demanda Ativa C'] = dados['Potência Ativa C'] * 5/60
+#if st.checkbox('Calcular/Incluir Energia Ativa'):
+#    if incluir_demanda_ativa:
+#        dados['Demanda Ativa trifásica'] = (dados['Potência Ativa A'] + dados['Potência Ativa B'] + dados['Potência Ativa C']) * 5/60
+#    else:
+        
+if st.checkbox('Calcular/Incluir Potência Ativa Trifásica'):
+    dados['Potência Ativa trifásica'] = dados['Potência Ativa A'] + dados['Potência Ativa B'] + dados['Potência Ativa C']
+if st.checkbox('Calcular/Incluir Demanda Ativa Trifásica'):
+    dados['Demanda Ativa trifásica'] = (dados['Potência Ativa A'] + dados['Potência Ativa B'] + dados['Potência Ativa C']) * 5/60
 data = pd.to_datetime(dados[0]['Hora'])
 coluna_1, coluna_2, coluna_3 = st.columns(3)
 filtro_ano = coluna_1.selectbox('Ano:', options=data.dt.year.drop_duplicates(), index=(len(data.dt.year.drop_duplicates()))-1)
@@ -39,13 +54,7 @@ else:
 
 divisao_tela1, divisao_tela2, divisao_tela3 = st.columns((2.75, 0.5, 2.75))
 
-if parametros_eletricos != []:
-#    for i in range(len(lista_nomes_arquivos_teste)):
-#        if i%2 == 0:
-#            divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[i], lista_nomes_arquivos_teste[i], filtro_data))
-#        else:
-#            divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[i], lista_nomes_arquivos_teste[i], filtro_data))
-    
+if parametros_eletricos != []: 
     divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[0], lista_nomes_arquivos_teste[0], filtro_data))
     divisao_tela3.plotly_chart(plot_graficos(parametros_eletricos, dados[1], lista_nomes_arquivos_teste[1], filtro_data))
     divisao_tela1.plotly_chart(plot_graficos(parametros_eletricos, dados[2], lista_nomes_arquivos_teste[2], filtro_data))
