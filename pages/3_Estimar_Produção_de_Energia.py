@@ -13,6 +13,10 @@ st.set_page_config(
     layout="wide"
 )
 
+def clear_cache():
+    from streamlit.runtime.caching import cache_data_api
+    cache_data_api.CachedFunc.clear(import_from_GoogleSheets)
+
 st.title("Estimativa de Geração de Energia")
 
 tab_titles = [
@@ -40,6 +44,7 @@ with tabs[0]:
         arquivo_inversores = coluna_upload_2.file_uploader('Dados dos Inversores', type=['XLS', 'XLSX'])
         arquivo_ambiente = coluna_upload_3.file_uploader('Dados do Ambiente', type=['CSV'])
     else:
+        st.sidebar.button("Atualizar Dados",on_click=clear_cache)
         dados_modulo, dados_inversor, dados_ambiente = import_from_GoogleDrive()
         dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
         dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
