@@ -98,9 +98,10 @@ with tabs[1]:
             inversor = coluna_selecao_2.selectbox('Inversor', [dados_inversor.columns[int(dados_modulo[modulo]['Nº célula ref. ao inversor']) - 1]])
         else:
             inversor = coluna_selecao_2.selectbox('Inversor', dados_inversor.columns)
+        st.write(inversor)
         if coluna_selecao_2.checkbox('Mostrar Dados do Inversor'):
             coluna_selecao_2.dataframe(dados_inversor[inversor])
-
+        st.write(Tambi)
         Pmp, Imp, Vmp, Isc, Voc, TNOC, CIsc, CVoc, Gama, N_mod_serie, N_mod_paralelo = extrair_dados_modulos(dados_modulo, modulo, 'Energia')
         PnInv, Pmax, FVImp, Vioc, Imax, PmaxInv, EficInv10, EficInv50, EficInv100 = extrair_dados_inversores(
             dados_inversor, inversor)
