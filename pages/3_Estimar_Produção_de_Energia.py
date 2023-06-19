@@ -15,7 +15,7 @@ st.set_page_config(
 
 def clear_cache():
     from streamlit.runtime.caching import cache_data_api
-    cache_data_api.CachedFunc.clear(import_from_GoogleSheets)
+    cache_data_api.CachedFunc.clear(import_from_GoogleDrive)
 
 st.title("Estimativa de Geração de Energia")
 
