@@ -91,14 +91,12 @@ with tabs[1]:
 
         coluna_selecao_1, coluna_selecao_2, coluna_selecao_3 = st.columns((2, 2, 2))
         modulo = coluna_selecao_1.selectbox('Módulo', dados_modulo.columns)
-        st.write(modulo)
         if coluna_selecao_1.checkbox('Mostrar Dados do Módulo'):
             coluna_selecao_1.dataframe(dados_modulo[modulo])
         if dados_pre_estabelecidos:
             inversor = coluna_selecao_2.selectbox('Inversor', [dados_inversor.columns[int(dados_modulo[modulo]['Nº célula ref. ao inversor']) - 1]])
         else:
             inversor = coluna_selecao_2.selectbox('Inversor', dados_inversor.columns)
-        st.write(inversor)
         if coluna_selecao_2.checkbox('Mostrar Dados do Inversor'):
             coluna_selecao_2.dataframe(dados_inversor[inversor])
         st.write(Tambi)
@@ -176,7 +174,8 @@ if modulo != '' and inversor != '' and Tambi != []:
     potenciaSaida = dadosAmbienteValidos['Psaida']
 
 with tabs[2]:
-    if modulo != '' and inversor != '' and Tambi != []:
+    #if modulo != '' and inversor != '' and Tambi != []:
+    if modulo != '' and inversor != '' and len(Tambi) > 0:
         st.write('### Integralização')
         coluna_integralizacao_1, coluna_integralizacao_2, coluna_integralizacao_3 = st.columns((2, 2, 2))
         tempo = coluna_integralizacao_1.text_input('Período', '1')
