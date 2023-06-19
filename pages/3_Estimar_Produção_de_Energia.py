@@ -170,6 +170,7 @@ if modulo != '' and inversor != '' and len(Tambi) > 0:
 
     dadosAmbienteValidos = dadosAmbienteValidos.assign(Psaida=np.abs(Psaida)).set_index('Data')
     potenciaSaida = dadosAmbienteValidos['Psaida']
+    st.write(potenciaSaida)
 
 with tabs[2]:
     #if modulo != '' and inversor != '' and Tambi != []:
