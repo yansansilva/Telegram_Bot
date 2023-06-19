@@ -46,7 +46,6 @@ with tabs[0]:
     else:
         st.sidebar.button("Atualizar Dados",on_click=clear_cache)
         dados_modulo, dados_inversor, dados_ambiente = import_from_GoogleDrive()
-        st.write(dados_modulo)
         dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
         dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
         Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
@@ -92,6 +91,7 @@ with tabs[1]:
 
         coluna_selecao_1, coluna_selecao_2, coluna_selecao_3 = st.columns((2, 2, 2))
         modulo = coluna_selecao_1.selectbox('Módulo', dados_modulo.columns)
+        st.write(modulo)
         if coluna_selecao_1.checkbox('Mostrar Dados do Módulo'):
             coluna_selecao_1.dataframe(dados_modulo[modulo])
         if dados_pre_estabelecidos:
