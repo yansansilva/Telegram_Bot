@@ -62,12 +62,12 @@ with tabs[1]:
             dados_pre_estabelecidos = st.checkbox('Utilizar configurações pré-estabelecidas dos SFCR')
         coluna_selecao_1, coluna_selecao_2, coluna_selecao_3 = st.columns((2, 2, 2))
         if arquivo_modulos is not None:
-            dados_modulo = carregar_dados(arquivo_modulos, 'FDI')  # Características do módulo fotovoltaico
+            dados_modulo = carregar_dados(arquivo_modulos, 'Energia')  # Características do módulo fotovoltaico
             modulo = coluna_selecao_1.selectbox('Módulo', dados_modulo.columns)
             if coluna_selecao_1.checkbox('Mostrar Dados do Módulo'):
                 coluna_selecao_1.dataframe(dados_modulo[modulo])
         if arquivo_inversores is not None:
-            dados_inversor = carregar_dados(arquivo_inversores, 'FDI')  # Infomações dos inversores
+            dados_inversor = carregar_dados(arquivo_inversores, 'Energia')  # Infomações dos inversores
             if dados_pre_estabelecidos:
                 inversor = coluna_selecao_2.selectbox('Inversor', [dados_inversor.columns[int(dados_modulo[modulo]['Nº célula ref. ao inversor']) - 1]])
             else:
@@ -75,14 +75,14 @@ with tabs[1]:
             if coluna_selecao_2.checkbox('Mostrar Dados do Inversor'):
                 coluna_selecao_2.dataframe(dados_inversor[inversor])
         if arquivo_ambiente is not None:
-            dados_ambiente = carregar_dados(arquivo_ambiente, 'FDI')  # Informações de irradiância e temperatura ambiente
+            dados_ambiente = carregar_dados(arquivo_ambiente, 'Energia')  # Informações de irradiância e temperatura ambiente
             dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
             dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
             Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             # correspondentes ao zero de irradiância
         if arquivo_modulos and arquivo_inversores and arquivo_ambiente is not None:
-            Pmp, Imp, Vmp, Isc, Voc, TNOC, CIsc, CVoc, Gama = extrair_dados_modulos(dados_modulo, modulo, 'FDI')
+            Pmp, Imp, Vmp, Isc, Voc, TNOC, CIsc, CVoc, Gama, N_mod_serie, N_mod_paralelo = extrair_dados_modulos(dados_modulo, modulo, 'Energia')
             PnInv, Pmax, FVImp, Vioc, Imax, PmaxInv, EficInv10, EficInv50, EficInv100 = extrair_dados_inversores(
                 dados_inversor, inversor)
     else:
