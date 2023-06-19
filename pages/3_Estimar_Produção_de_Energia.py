@@ -133,7 +133,7 @@ if modulo != '' and inversor != '' and len(Tambi) > 0:
     while FDIi <= sol_span_high:
         Pmref = PnInv / FDIi
         # Função que calcula a potência teórica produzida por um gerador fotovoltaico
-        Pmei = PMPArranjoFV(Pmref, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
+        Pmei = PMPArranjoFV(Pmref*N_mod_paralelo*N_mod_serie, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
         # Correção de perdas associadas
         Pmei = Pmei * (1 - PD - PDCFP)
         # Parâmetro característico do inversor que computa as perdas de autoconsumo
