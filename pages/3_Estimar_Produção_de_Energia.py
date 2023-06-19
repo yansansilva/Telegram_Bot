@@ -129,7 +129,7 @@ PCP = 0.02  # Cabos e Proteções
 FDI, EficInv, Yf = [], [], []
 
 #if modulo != '' and inversor != '' and Tambi != []:
-#if modulo != '' and inversor != '' and len(Tambi) > 0:
+if modulo != '' and inversor != '' and len(Tambi) > 0:
 #    while FDIi <= sol_span_high:
 #        Pmref = PnInv / FDIi
 #        # Função que calcula a potência teórica produzida por um gerador fotovoltaico
@@ -150,35 +150,35 @@ FDI, EficInv, Yf = [], [], []
 #        FDI.append(FDIi)
 #        FDIi = round(FDIi + 0.1, 1)  # Incrementa o FDI
 
-# Função que calcula a potência teórica produzida por um gerador fotovoltaico
-Pmref = N_mod_paralelo * N_mod_serie * Pmp # Potência nominal do gerador fotovoltaico
-Pmei = PMPArranjoFV(Pmref, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
-# Correção de perdas associadas
-Pmei = Pmei * (1 - PD - PDCFP)
-# Parâmetro característico do inversor que computa as perdas de autoconsumo
-k0 = (1 / (9 * EficInv100) - 1 / (4 * EficInv50) + 5 / (36 * EficInv10)) * 100
-# Parâmetro característico do inversor que computa as perdas proporcionais ao carregamento
-k1 = (-1 + (-4 / (3 * EficInv100) + 33 / (12 * EficInv50) - 5 / (12 * EficInv10)) * 100)
-# Parâmetro característico do inversor que computa as perdas proporcionais ao quadrado do carregamento
-k2 = (20 / (9 * EficInv100) - 5 / (2 * EficInv50) + 5 / (18 * EficInv10)) * 100
-# Função que calcula a potência de saída do inversor
-Psaida, p0, PperdasDC, Pperdas = CalcPotSaidaINV(Pmei, PnInv, PmaxInv, k0, k1, k2)
-EficInv.append((sum(Psaida) / sum(Pmei)) * 100)  # Eficiência do inversor
-Yf.append((sum(Psaida) * (1 - PCP)) / Pmref)  # Produtividade, corrigidas as perdas em cabos e proteções
+    # Função que calcula a potência teórica produzida por um gerador fotovoltaico
+    Pmref = N_mod_paralelo * N_mod_serie * Pmp # Potência nominal do gerador fotovoltaico
+    Pmei = PMPArranjoFV(Pmref, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
+    # Correção de perdas associadas
+    Pmei = Pmei * (1 - PD - PDCFP)
+    # Parâmetro característico do inversor que computa as perdas de autoconsumo
+    k0 = (1 / (9 * EficInv100) - 1 / (4 * EficInv50) + 5 / (36 * EficInv10)) * 100
+    # Parâmetro característico do inversor que computa as perdas proporcionais ao carregamento
+    k1 = (-1 + (-4 / (3 * EficInv100) + 33 / (12 * EficInv50) - 5 / (12 * EficInv10)) * 100)
+    # Parâmetro característico do inversor que computa as perdas proporcionais ao quadrado do carregamento
+    k2 = (20 / (9 * EficInv100) - 5 / (2 * EficInv50) + 5 / (18 * EficInv10)) * 100
+    # Função que calcula a potência de saída do inversor
+    Psaida, p0, PperdasDC, Pperdas = CalcPotSaidaINV(Pmei, PnInv, PmaxInv, k0, k1, k2)
+    EficInv.append((sum(Psaida) / sum(Pmei)) * 100)  # Eficiência do inversor
+    Yf.append((sum(Psaida) * (1 - PCP)) / Pmref)  # Produtividade, corrigidas as perdas em cabos e proteções
 
-    #############-EFICIÊNCIA ENERGÉTICA DO INVERSOR-##########
-    if uti_max == 1:
-        ind_FDI_max = Yf.index(max(Yf))
-        FDI_dim = FDI[ind_FDI_max]
+#    #############-EFICIÊNCIA ENERGÉTICA DO INVERSOR-##########
+#    if uti_max == 1:
+#        ind_FDI_max = Yf.index(max(Yf))
+#        FDI_dim = FDI[ind_FDI_max]
 
-    Tc = max(Tambi) + 1000 * (TNOC - 20) / 800
-    Tc_min = min(Tambi) + 200 * (TNOC - 20) / 800
+#    Tc = max(Tambi) + 1000 * (TNOC - 20) / 800
+#    Tc_min = min(Tambi) + 200 * (TNOC - 20) / 800
 
-    FDI_interv = np.round(np.arange(-0.0019933, sol_span_high + 0.01, 0.01), 2).tolist()
-    Yf_interp = CubicSpline(FDI, Yf)
+#    FDI_interv = np.round(np.arange(-0.0019933, sol_span_high + 0.01, 0.01), 2).tolist()
+#    Yf_interp = CubicSpline(FDI, Yf)
 
-    calculo = 'Energia'
-    figura = None
+#    calculo = 'Energia'
+#    figura = None
 
     #Sistema.calc_ger(Vmp, Voc, CVoc, Imax, Imp, Pmp, Tc, Tc_min, Tcref, FVImp, PnInv, sol_span_low, sol_span_high,
     #                 FDI_interv, Yf_interp, modulo, inversor, calculo, figura)
