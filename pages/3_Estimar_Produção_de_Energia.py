@@ -193,7 +193,7 @@ with tabs[2]:
         st.write('### Integralização')
         coluna_integralizacao_1, coluna_integralizacao_2, coluna_integralizacao_3 = st.columns((2, 2, 2))
         tempo = coluna_integralizacao_1.text_input('Período', '1')
-        escala_de_tempo = {'Dia':'d', 'Mês':'M', 'Ano':'y'}
+        escala_de_tempo = {'Minuto':'min', 'Hora':'h', 'Dia':'d', 'Mês':'M', 'Ano':'y'}
         integralizacao = coluna_integralizacao_2.selectbox('Escala de tempo', escala_de_tempo)
         periodo = tempo + escala_de_tempo[integralizacao]
 
