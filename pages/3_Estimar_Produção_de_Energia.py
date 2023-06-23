@@ -214,19 +214,15 @@ with tabs[2]:
         coluna_resultado_2.dataframe(Yf)
 
         fig = go.Figure()
-        fig.add_trace(go.Line(x=Energia.index, y=Energia))
-        fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash')))
+        fig.add_trace(go.Line(x=Energia.index, y=Energia, name='Energia (kWh)'))
+        fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'))
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
             #xaxis_title='FDI = PnomInv/PnomGer',
             #yaxis_title="Yf (kWh / kWp)",
-            font=dict(
-                family="Courier New, monospace",
-                size=12,
-                color="RebeccaPurple"
-            ),
-            showlegend=False,
+            font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"),
+            showlegend=True,
             width=500, height=350
         )
         fig.update_xaxes(rangemode='tozero')
