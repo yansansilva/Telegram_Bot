@@ -27,7 +27,7 @@ def carregar_dados(up, modo):
 		if up.type != "text/csv":
 			dados_df = pd.read_excel(up, sheet_name=0, index_col=0)
 		else:
-			dados_df = pd.read_csv(up)
+			dados_df = pd.read_csv(up, delimiter=';')
 
 	return dados_df
 
