@@ -23,7 +23,7 @@ bot = telebot.TeleBot(bot_token)
 
 # credenciais do serviço
 SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = st.secrets["gcp_service_account"]
+SERVICE_ACCOUNT_FILE = st.secrets["gcp_service_account_3"]
 
 # autenticação do serviço
 creds = Credentials.from_service_account_info(SERVICE_ACCOUNT_FILE, scopes=SCOPE, )
