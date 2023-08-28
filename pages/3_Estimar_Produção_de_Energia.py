@@ -176,6 +176,7 @@ with tabs[2]:
         Energia = Energia.rename('Energia')
         Yf = Energia*(1-PCP)/(Pmref/1000) # Produtividade, corrigidas as perdas em cabos e proteções
         Yf = Yf.rename('Yf')
+	PR = Yf/Iinci * 100
 
         if 'min' in periodo:
             Potencia = potenciaSaida.resample(periodo, label='right', closed='right').mean().dropna()
@@ -194,10 +195,13 @@ with tabs[2]:
         coluna_resultado_1.write('Total: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
         coluna_resultado_2.write('Produtividade')
         coluna_resultado_2.dataframe(Yf)
+	coluna_resultado_3.write('Rendimento Global')
+        coluna_resultado_3.dataframe(PR)
 
         fig = go.Figure()
         fig.add_trace(go.Line(x=Energia.index, y=Energia, name='Energia (kWh)'))
         fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'))
+	fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'))
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
@@ -210,7 +214,7 @@ with tabs[2]:
         fig.update_xaxes(rangemode='tozero')
         fig.update_yaxes(rangemode='tozero')
 
-        coluna_resultado_3.plotly_chart(fig)
+        st.plotly_chart(fig)
 
         st.write("### Salvar Resultados")
 
