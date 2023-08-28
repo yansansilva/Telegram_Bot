@@ -37,6 +37,23 @@ TARGET_SPREADSHEET_ID = planilha[1]
 # Fuso horário brasileiro
 tz = pytz.timezone('America/Sao_Paulo')
 
+def debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging, consumo_ultima_linha,
+                     rpi_on, pc_on, consumo_alto, condicao_1, condicao_2, condicao_3):
+    print(f''' \n
+            hora atual: {horario_atual} \n
+            hora rpi: {horario_ultima_linha_rpi} \n
+            hora pc: {horario_ultima_linha_pc_debugging} \n
+            consumo: {consumo_ultima_linha} \n \n
+            horario atual: {datetime.strptime(horario_atual, '%Y-%m-%d %H:%M:%S').timestamp()} : {datetime.now()} \n
+            ultimo horario rpi: {horario_ultima_linha_rpi.timestamp()} \n
+            ultimo horario pc: {horario_ultima_linha_pc_debugging} \n \n
+            rpi_on: {rpi_on} \n
+            pc_on: {pc_on} \n
+            consumo_alto: {consumo_alto} \n \n
+            Condição 1: {condicao_1} \n
+            Condição 2: {condicao_2} \n
+            Condição 3: {condicao_3} \n
+            -----------------------------------------------------------------------------''')
 
 # Função que verifica se já passou o intervalo de tempo definido e se houve novas linhas adicionadas na planilha
 def verifica_planilha():
@@ -81,21 +98,8 @@ def verifica_planilha():
             condicao_3 = rpi_on or pc_on or consumo_alto
 
             # Para debbuging do código
-            st.write(f''' \n
-            hora atual: {horario_atual} \n
-            hora rpi: {horario_ultima_linha_rpi} \n
-            hora pc: {horario_ultima_linha_pc_debugging} \n
-            consumo: {consumo_ultima_linha} \n \n
-            horario atual: {datetime.strptime(horario_atual, '%Y-%m-%d %H:%M:%S').timestamp()} : {datetime.now()} \n
-            ultimo horario rpi: {horario_ultima_linha_rpi.timestamp()} \n
-            ultimo horario pc: {horario_ultima_linha_pc_debugging} \n \n
-            rpi_on: {rpi_on} \n
-            pc_on: {pc_on} \n
-            consumo_alto: {consumo_alto} \n \n
-            Condição 1: {condicao_1} \n
-            Condição 2: {condicao_2} \n
-            Condição 3: {condicao_3} \n
-            -----------------------------------------------------------------------------''')
+            debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging, consumo_ultima_linha,
+                             rpi_on, pc_on, consumo_alto, condicao_1, condicao_2, condicao_3)
 
             if horario_ultima_linha_pc_debugging == 'PC Desligado!':
                 if rpi_on:
