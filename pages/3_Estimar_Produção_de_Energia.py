@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 from scipy.interpolate import CubicSpline
+from io import BytesIO
 from AnaliseFotovoltaico import *
 from ExtrairDadosSFCR import *
 from ImportarArquivos import *
@@ -13,11 +14,25 @@ st.set_page_config(
     layout="wide"
 )
 
-def clear_cache():
-    from streamlit.runtime.caching import cache_data_api
-    cache_data_api.CachedFunc.clear(import_from_GoogleDrive)
-
 st.title("Estimativa de Geração de Energia")
+
+@st.cache_data
+def converter_df_csv(df):
+	# IMPORTANT: Cache the conversion to prevent computation on every rerun
+	return df.to_csv(index=False).encode('utf-8')
+
+@st.cache_data
+def converter_df_excel(df):
+	output = BytesIO()
+	writer = pd.ExcelWriter(output, engine='xlsxwriter')
+	df.to_excel(writer, index=False, sheet_name='Plan1')
+	workbook = writer.book
+	worksheet = writer.sheets['Plan1']
+	format1 = workbook.add_format({'num_format': '0.00'})
+	worksheet.set_column('A:A', None, format1)
+	writer.save()
+	processed_data = output.getvalue()
+	return processed_data
 
 tab_titles = [
     'Importar Arquivos',
@@ -44,10 +59,9 @@ with tabs[0]:
         arquivo_inversores = coluna_upload_2.file_uploader('Dados dos Inversores', type=['XLS', 'XLSX'])
         arquivo_ambiente = coluna_upload_3.file_uploader('Dados do Ambiente', type=['CSV'])
     else:
-        st.sidebar.button("Atualizar Dados",on_click=clear_cache)
         dados_modulo, dados_inversor, dados_ambiente = import_from_GoogleDrive()
         dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
-        dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
+        dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
         Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
         Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
         # correspondentes ao zero de irradiância
@@ -75,9 +89,9 @@ with tabs[1]:
             if coluna_selecao_2.checkbox('Mostrar Dados do Inversor'):
                 coluna_selecao_2.dataframe(dados_inversor[inversor])
         if arquivo_ambiente is not None:
-            dados_ambiente = carregar_dados(arquivo_ambiente, 'Energia')  # Informações de irradiância e temperatura ambiente
-            dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
-            dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
+            dados_ambiente = carregar_dados(arquivo_ambiente, 'Energia').dropna()  # Informações de irradiância e temperatura ambiente
+            dadosAmbienteValidos = dados_ambiente[(dados_ambiente.values != 0).all(axis=1)]
+            dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
             Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             # correspondentes ao zero de irradiância
@@ -99,6 +113,7 @@ with tabs[1]:
             inversor = coluna_selecao_2.selectbox('Inversor', dados_inversor.columns)
         if coluna_selecao_2.checkbox('Mostrar Dados do Inversor'):
             coluna_selecao_2.dataframe(dados_inversor[inversor])
+
         Pmp, Imp, Vmp, Isc, Voc, TNOC, CIsc, CVoc, Gama, N_mod_serie, N_mod_paralelo = extrair_dados_modulos(dados_modulo, modulo, 'Energia')
         PnInv, Pmax, FVImp, Vioc, Imax, PmaxInv, EficInv10, EficInv50, EficInv100 = extrair_dados_inversores(
             dados_inversor, inversor)
@@ -113,8 +128,8 @@ Iincref = 1000  # Irradiância de referência W/m2
 Tcref = 25  # Temperatura na condição de referência
 
 ## Faixa de span da solução
-#sol_span_low = 0.6
-#sol_span_high = 2
+sol_span_low = 0.6
+sol_span_high = 2
 
 ## PERDAS CC
 PD = 0.02  # Perdas decorrentes da dispersão entre módulos
@@ -123,33 +138,12 @@ PDCFP = 0.025  # Perdas em Diodos, Cabos, Fusíveis e Proteções
 PCP = 0.02  # Cabos e Proteções
 ##########################################################
 
-#uti_max = 1  # Utiliza o FDI cuja produtividade é máxima para o dimensionamento do gerador(1) para utilizar este procedimento e 0 para não utilizar)
+uti_max = 1  # Utiliza o FDI cuja produtividade é máxima para o dimensionamento do gerador(1) para utilizar este procedimento e 0 para não utilizar)
 
-#FDIi = 0.2
+FDIi = 0.2
 FDI, EficInv, Yf = [], [], []
 
-#if modulo != '' and inversor != '' and Tambi != []:
-if modulo != '' and inversor != '' and len(Tambi) > 0:
-#    while FDIi <= sol_span_high:
-#        Pmref = PnInv / FDIi
-#        # Função que calcula a potência teórica produzida por um gerador fotovoltaico
-#        Pmei = PMPArranjoFV(Pmref, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
-#        # Correção de perdas associadas
-#        Pmei = Pmei * (1 - PD - PDCFP)
-#        # Parâmetro característico do inversor que computa as perdas de autoconsumo
-#        k0 = (1 / (9 * EficInv100) - 1 / (4 * EficInv50) + 5 / (36 * EficInv10)) * 100
-#        # Parâmetro característico do inversor que computa as perdas proporcionais ao carregamento
-#        k1 = (-1 + (-4 / (3 * EficInv100) + 33 / (12 * EficInv50) - 5 / (12 * EficInv10)) * 100)
-#        # Parâmetro característico do inversor que computa as perdas proporcionais ao quadrado do carregamento
-#        k2 = (20 / (9 * EficInv100) - 5 / (2 * EficInv50) + 5 / (18 * EficInv10)) * 100
-#        # Função que calcula a potência de saída do inversor
-#        Psaida, p0, PperdasDC, Pperdas = CalcPotSaidaINV(Pmei, PnInv, PmaxInv, k0, k1, k2)
-
-#        EficInv.append((sum(Psaida) / sum(Pmei)) * 100)  # Eficiência do inversor
-#        Yf.append((sum(Psaida) * (1 - PCP)) / Pmref)  # Produtividade, corrigidas as perdas em cabos e proteções
-#        FDI.append(FDIi)
-#        FDIi = round(FDIi + 0.1, 1)  # Incrementa o FDI
-
+if modulo != '' and inversor != '' and Tambi != []:
     # Função que calcula a potência teórica produzida por um gerador fotovoltaico
     Pmref = N_mod_paralelo * N_mod_serie * Pmp # Potência nominal do gerador fotovoltaico
     Pmei = PMPArranjoFV(Pmref, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
@@ -166,30 +160,11 @@ if modulo != '' and inversor != '' and len(Tambi) > 0:
     EficInv.append((sum(Psaida) / sum(Pmei)) * 100)  # Eficiência do inversor
     Yf.append((sum(Psaida) * (1 - PCP)) / Pmref)  # Produtividade, corrigidas as perdas em cabos e proteções
 
-#    #############-EFICIÊNCIA ENERGÉTICA DO INVERSOR-##########
-#    if uti_max == 1:
-#        ind_FDI_max = Yf.index(max(Yf))
-#        FDI_dim = FDI[ind_FDI_max]
-
-#    Tc = max(Tambi) + 1000 * (TNOC - 20) / 800
-#    Tc_min = min(Tambi) + 200 * (TNOC - 20) / 800
-
-#    FDI_interv = np.round(np.arange(-0.0019933, sol_span_high + 0.01, 0.01), 2).tolist()
-#    Yf_interp = CubicSpline(FDI, Yf)
-
-#    calculo = 'Energia'
-#    figura = None
-
-    #Sistema.calc_ger(Vmp, Voc, CVoc, Imax, Imp, Pmp, Tc, Tc_min, Tcref, FVImp, PnInv, sol_span_low, sol_span_high,
-    #                 FDI_interv, Yf_interp, modulo, inversor, calculo, figura)
-
-
     dadosAmbienteValidos = dadosAmbienteValidos.assign(Psaida=np.abs(Psaida)).set_index('Data')
     potenciaSaida = dadosAmbienteValidos['Psaida']
 
 with tabs[2]:
-    #if modulo != '' and inversor != '' and Tambi != []:
-    if modulo != '' and inversor != '' and len(Tambi) > 0:
+    if modulo != '' and inversor != '' and Tambi != []:
         st.write('### Integralização')
         coluna_integralizacao_1, coluna_integralizacao_2, coluna_integralizacao_3 = st.columns((2, 2, 2))
         tempo = coluna_integralizacao_1.text_input('Período', '1')
@@ -202,9 +177,16 @@ with tabs[2]:
         Yf = Energia*(1-PCP)/(Pmref/1000) # Produtividade, corrigidas as perdas em cabos e proteções
         Yf = Yf.rename('Yf')
 
+        if 'min' in periodo:
+            Potencia = potenciaSaida.resample(periodo, label='right', closed='right').mean().dropna()
+        else:
+            Potencia = potenciaSaida.resample(periodo).mean().dropna()
         st.write(f'''
                 _________________________________________________________________________
                   ''')
+        st.write(Tambi)
+        st.write(Iinci)
+        st.write(dadosAmbienteValidos)
 
         coluna_resultado_1, coluna_resultado_2, coluna_resultado_3 = st.columns((2, 2, 3))
         coluna_resultado_1.write('Energia')
@@ -229,6 +211,34 @@ with tabs[2]:
         fig.update_yaxes(rangemode='tozero')
 
         coluna_resultado_3.plotly_chart(fig)
+
+        st.write("### Salvar Resultados")
+
+        coluna1_nomear_arquivo, coluna2_nomear_arquivo = st.columns((3, 2))
+        dict_escala_tempo = {'Minuto':'em Minutos ', 'Hora':'Horários ', 'Dia':'Diários ', 'Mês':'Mensais ', 'Ano':'Anuais '}
+        nomeprovisorio = 'Dados de Energia ' + dict_escala_tempo[integralizacao] + 'do Sistema ' + modulo[-3:-1] + '_' + str(Energia.index[0].year) + '-' + str(Energia.index[-1].year)
+        nomearquivo = coluna1_nomear_arquivo.text_input('Digite um nome para o arquivo de energia:', nomeprovisorio)
+
+        coluna1_salvar, coluna2_salvar, coluna3_salvar = st.columns((2, 2, 6))
+        csv = converter_df_csv(Energia.reset_index())
+        excel = converter_df_excel(Energia.reset_index())
+        coluna1_salvar.download_button(label="Download em CSV", data=csv, file_name=nomearquivo + '.csv',
+                                        mime='text/csv')
+        coluna2_salvar.download_button(label="Download em Excel", data=excel, file_name=nomearquivo + '.xlsx',
+                                        mime='application/vnd.ms-excel')
+
+
+        coluna1_nomear_arquivo_2, coluna2_nomear_arquivo_2 = st.columns((3, 2))
+        nomeprovisorio2 = 'Dados de Potência ' + dict_escala_tempo[integralizacao] + 'do Sistema ' + modulo[-3:-1] + '_' + str(Potencia.index[0].year) + '-' + str(Potencia.index[-1].year)
+        nomearquivo2 = coluna1_nomear_arquivo_2.text_input('Digite um nome para o arquivo de potência:', nomeprovisorio2)
+
+        coluna1_salvar_2, coluna2_salvar_2, coluna3_salvar_2 = st.columns((2, 2, 6))
+        csv = converter_df_csv(Potencia.reset_index())
+        excel = converter_df_excel(Potencia.reset_index())
+        coluna1_salvar_2.download_button(label="Download em CSV", data=csv, file_name=nomearquivo2 + '.csv',
+                                       mime='text/csv')
+        coluna2_salvar_2.download_button(label="Download em Excel", data=excel, file_name=nomearquivo2 + '.xlsx',
+                                       mime='application/vnd.ms-excel')
 
     st.write(f'''
                 _________________________________________________________________________
