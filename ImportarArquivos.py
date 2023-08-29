@@ -10,7 +10,7 @@ def carregar_dados(up, modo):
 		dados_df = pd.DataFrame()
 		for data_file in up:
 			try:
-				df = pd.read_csv(data_file, sep=';', decimal=',')
+				df = pd.read_csv(data_file, sep=';', decimal=',', dayfirst=True)
 			except:
 				df = pd.read_excel(data_file)
 			try:
@@ -27,28 +27,20 @@ def carregar_dados(up, modo):
 		if up.type != "text/csv":
 			dados_df = pd.read_excel(up, sheet_name=0, index_col=0)
 		else:
-			dados_df = pd.read_csv(up, delimiter=';')
+			dados_df = pd.read_csv(up, sep=';', decimal=',', dayfirst=True, encoding='cp1252')
 
 	return dados_df
 
 @st.cache_data
 def import_from_GoogleDrive():
-    # Selecionar planilha
+	# Selecionar planilha
     inversores = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Inversores')
     modulos = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Modulos')
-    #ambiente = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Ambiente')
-    planilhas_ambiente = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive", ], )).open('Dados_Irradiância_e_Temperatura_Ambiente').worksheets()
+    ambiente = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Ambiente')
 
     dados_inversor = pd.DataFrame(inversores.get_all_records()).set_index('Inversor')
     dados_modulo = pd.DataFrame(modulos.get_all_records()).set_index('Módulo')
-    #dados_ambiente = pd.DataFrame(ambiente.get_all_records())
-
-    Amb = pd.DataFrame()
-    for planilha in range(len(planilhas_ambiente)):
-    	Amb = pd.concat([Amb, pd.DataFrame(planilhas_ambiente[planilha].get_all_records(empty2zero=True)[1:])])
-    ambiente = Amb.set_axis(planilhas_ambiente[0].get_values()[0], axis='columns').reset_index(drop=True)
-    ambiente[ambiente.columns[0]] = pd.to_datetime(ambiente[ambiente.columns[0]], dayfirst=True)
-    dados_ambiente = ambiente[ambiente != 0].dropna().reset_index(drop=True)
+    dados_ambiente = pd.DataFrame(ambiente.get_all_records())
 
     return dados_modulo, dados_inversor, dados_ambiente
 
