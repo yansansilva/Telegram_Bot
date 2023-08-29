@@ -160,8 +160,9 @@ if modulo != '' and inversor != '' and Tambi != []:
     EficInv.append((sum(Psaida) / sum(Pmei)) * 100)  # Eficiência do inversor
     Yf.append((sum(Psaida) * (1 - PCP)) / Pmref)  # Produtividade, corrigidas as perdas em cabos e proteções
 
-    dadosAmbienteValidos = dadosAmbienteValidos.assign(Psaida=np.abs(Psaida)).set_index('Data')
+    dadosAmbienteValidos = dadosAmbienteValidos.assign(Psaida=np.abs(Psaida)).set_index('Data').dropna()
     potenciaSaida = dadosAmbienteValidos['Psaida']
+    irradiancia = dadosAmbienteValidos['Gk']
 
 with tabs[2]:
     if modulo != '' and inversor != '' and Tambi != []:
@@ -176,7 +177,9 @@ with tabs[2]:
         Energia = Energia.rename('Energia')
         Yf = Energia*(1-PCP)/(Pmref/1000) # Produtividade, corrigidas as perdas em cabos e proteções
         Yf = Yf.rename('Yf')
-	PR = Yf/Iinci * 100
+        PR = Yf[Yf!=0]/(irradiancia.resample(periodo).sum().dropna()/1000)*100
+        PR = PR.rename('PR')
+        PR[PR>100] = 100
 
         if 'min' in periodo:
             Potencia = potenciaSaida.resample(periodo, label='right', closed='right').mean().dropna()
@@ -185,23 +188,21 @@ with tabs[2]:
         st.write(f'''
                 _________________________________________________________________________
                   ''')
-        st.write(Tambi)
-        st.write(Iinci)
-        st.write(dadosAmbienteValidos)
 
         coluna_resultado_1, coluna_resultado_2, coluna_resultado_3 = st.columns((2, 2, 3))
         coluna_resultado_1.write('Energia')
+        coluna_resultado_1.dataframe(irradiancia.resample(periodo).sum().dropna() / 1000)
         coluna_resultado_1.dataframe(Energia)
         coluna_resultado_1.write('Total: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
         coluna_resultado_2.write('Produtividade')
         coluna_resultado_2.dataframe(Yf)
-	coluna_resultado_3.write('Rendimento Global')
-        coluna_resultado_3.dataframe(PR)
+        coluna_resultado_3.write('Rendimento Global')
+        coluna_resultado_3.dataframe(PR.dropna())
 
         fig = go.Figure()
         fig.add_trace(go.Line(x=Energia.index, y=Energia, name='Energia (kWh)'))
         fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'))
-	fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'))
+        fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'))
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
@@ -214,7 +215,7 @@ with tabs[2]:
         fig.update_xaxes(rangemode='tozero')
         fig.update_yaxes(rangemode='tozero')
 
-        st.plotly_chart(fig)
+        coluna_resultado_3.plotly_chart(fig)
 
         st.write("### Salvar Resultados")
 
