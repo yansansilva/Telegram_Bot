@@ -37,7 +37,6 @@ def import_from_GoogleDrive():
     inversores = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Inversores')
     modulos = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Modulos')
     ambiente = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Simulacao').worksheet('Ambiente')
-	#ambiente = gspread.authorize(Credentials.from_service_account_info(st.secrets["gcp_service_account"],scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive",],)).open('Dados_Irradiância_e_Temperatura_Ambiente').worksheet('Sheet1')
 
     dados_inversor = pd.DataFrame(inversores.get_all_records()).set_index('Inversor')
     dados_modulo = pd.DataFrame(modulos.get_all_records()).set_index('Módulo')
