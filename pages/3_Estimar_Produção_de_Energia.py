@@ -218,7 +218,8 @@ with tabs[2]:
             #yaxis_title="Yf (kWh / kWp)",
             font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"),
             showlegend=True,
-            width=500, height=350
+            #width=500, height=350
+            width=1000, height=400
         )
         fig.update_xaxes(rangemode='tozero')
         fig.update_yaxes(rangemode='tozero')
