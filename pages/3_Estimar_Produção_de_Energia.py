@@ -45,7 +45,7 @@ tabs = st.tabs(tab_titles)
 dados_modulo, dados_inversor, dadosAmbienteValidos = pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 Iinci, Tambi = [], []
 modulo, inversor, arquivo_modulos, arquivo_inversores, arquivo_ambiente = '', '', '', '',''
-st.write(type(Tambi))
+
 with tabs[0]:
     st.write("### Upload dos arquivos")
     importar_dados = st.radio('', ('Importar sua própria base de dados', 'Importar base de dados do servidor'),
@@ -100,7 +100,7 @@ with tabs[1]:
             Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             st.write(Iinci)
-            #st.write(Tambi != [])
+            st.write(Tambi is [])
             st.write(modulo != '')
             st.write(inversor != '')
             # correspondentes ao zero de irradiância
