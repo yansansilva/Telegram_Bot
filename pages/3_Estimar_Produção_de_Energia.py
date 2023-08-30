@@ -201,6 +201,7 @@ with tabs[2]:
         st.write('# Resultados')
         Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
         st.dataframe(Resultados)
+        st.write('Total: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
 
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
