@@ -230,7 +230,7 @@ with tabs[2]:
 
         st.write("### Salvar Resultados")
 
-        Resuldados = pd.concat([Energia, Irradiacao, Yf, PR])
+        Resuldados = pd.concat([Energia, Irradiacao, Yf, PR], join='outer')
         st.write(Resuldados)
         coluna1_nomear_arquivo, coluna2_nomear_arquivo = st.columns((3, 2))
         dict_escala_tempo = {'Minuto':'em Minutos ', 'Hora':'Horários ', 'Dia':'Diários ', 'Mês':'Mensais ', 'Ano':'Anuais '}
