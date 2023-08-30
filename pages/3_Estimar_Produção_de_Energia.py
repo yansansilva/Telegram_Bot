@@ -210,7 +210,7 @@ with tabs[2]:
         fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)'))
         fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'))
         fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'))
-        fig.add_trace(go.bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação (kWh/m²)'))
+        fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação (kWh/m²)'))
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
