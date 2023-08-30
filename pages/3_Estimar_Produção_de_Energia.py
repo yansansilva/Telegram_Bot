@@ -207,7 +207,7 @@ with tabs[2]:
         coluna_resultado_4.dataframe(Irradiacao)
 
         # Create figure with secondary y-axis
-	fig = make_subplots(specs=[[{"secondary_y": True}]])
+	    fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)'), secondary_y=False)
         fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'), secondary_y=False)
         fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'), secondary_y=False)
