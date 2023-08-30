@@ -174,7 +174,7 @@ if modulo != '' and inversor != '' and Tambi is not []:
     irradiancia = dadosAmbienteValidos['Gk']
 
 with tabs[2]:
-    if modulo != '' and inversor != '' and Tambi != []:
+    if modulo != '' and inversor != '' and Tambi is not []:
         st.write('### Integralização')
         coluna_integralizacao_1, coluna_integralizacao_2, coluna_integralizacao_3 = st.columns((2, 2, 2))
         tempo = coluna_integralizacao_1.text_input('Período', '1')
