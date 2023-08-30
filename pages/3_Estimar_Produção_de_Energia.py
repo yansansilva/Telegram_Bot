@@ -178,13 +178,13 @@ with tabs[2]:
         periodo = tempo + escala_de_tempo[integralizacao]
 
         Energia = potenciaSaida.resample(periodo).sum().dropna()/1000
-        Energia = Energia.rename('Energia')
+        Energia = Energia.rename('Energia (kWh)')
         Irradiacao = irradiancia.resample(periodo).sum().dropna()/1000
         Irradiacao = Irradiacao.rename('Irradiação (kWh/m²)')
         Yf = Energia*(1-PCP)/(Pmref/1000) # Produtividade, corrigidas as perdas em cabos e proteções
-        Yf = Yf.rename('Yf')
+        Yf = Yf.rename('Yf (kWh/kWp)')
         PR = Yf[Yf!=0]/(Irradiacao/1)*100
-        PR = PR.rename('PR')
+        PR = PR.rename('PR (%)')
         PR[PR>100] = 100
 
         if 'min' in periodo:
