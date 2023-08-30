@@ -196,7 +196,7 @@ with tabs[2]:
                 _________________________________________________________________________
                   ''')
 
-        st.write('# Resultados')
+        st.write('## Resultados')
         Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
         st.dataframe(Resultados)
 
