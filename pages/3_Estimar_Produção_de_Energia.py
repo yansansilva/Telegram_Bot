@@ -230,6 +230,8 @@ with tabs[2]:
 
         st.write("### Salvar Resultados")
 
+        Resuldados = pd.concat(Energia, Irradiacao, Yf, PR)
+        st.write(Resuldados)
         coluna1_nomear_arquivo, coluna2_nomear_arquivo = st.columns((3, 2))
         dict_escala_tempo = {'Minuto':'em Minutos ', 'Hora':'Horários ', 'Dia':'Diários ', 'Mês':'Mensais ', 'Ano':'Anuais '}
         nomeprovisorio = 'Dados de Energia ' + dict_escala_tempo[integralizacao] + 'do Sistema ' + modulo[-3:-1] + '_' + str(Energia.index[0].year) + '-' + str(Energia.index[-1].year)
