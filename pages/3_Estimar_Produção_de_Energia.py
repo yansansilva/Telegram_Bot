@@ -197,15 +197,9 @@ with tabs[2]:
                   ''')
 
         coluna_resultado_1, coluna_resultado_2, coluna_resultado_3, coluna_resultado_4 = st.columns((2, 2, 2, 2))
-        coluna_resultado_1.write('Energia (kWh)')
-        coluna_resultado_1.dataframe(Energia)
-        coluna_resultado_1.write('Total: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
-        coluna_resultado_2.write('Produtividade (kWh/kWp)')
-        coluna_resultado_2.dataframe(Yf)
-        coluna_resultado_3.write('Rendimento Global (%)')
-        coluna_resultado_3.dataframe(PR.dropna())
-        coluna_resultado_4.write('Irradiação (kWh/m²)')
-        coluna_resultado_4.dataframe(Irradiacao)
+        coluna_resultado_1.write('Resultados')
+        Resuldados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], join='outer')
+        coluna_resultado_1.dataframe(Resuldados)
 
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -230,33 +224,18 @@ with tabs[2]:
 
         st.write("### Salvar Resultados")
 
-        Resuldados = pd.concat([Energia, Irradiacao, Yf, PR], axis=1)
-        st.write(Resuldados)
         coluna1_nomear_arquivo, coluna2_nomear_arquivo = st.columns((3, 2))
         dict_escala_tempo = {'Minuto':'em Minutos ', 'Hora':'Horários ', 'Dia':'Diários ', 'Mês':'Mensais ', 'Ano':'Anuais '}
-        nomeprovisorio = 'Dados de Energia ' + dict_escala_tempo[integralizacao] + 'do Sistema ' + modulo[-3:-1] + '_' + str(Energia.index[0].year) + '-' + str(Energia.index[-1].year)
-        nomearquivo = coluna1_nomear_arquivo.text_input('Digite um nome para o arquivo de energia:', nomeprovisorio)
+        nomeprovisorio = 'Resultados ' + dict_escala_tempo[integralizacao] + 'do Sistema ' + modulo[-3:-1] + '_' + str(Energia.index[0].year) + '-' + str(Energia.index[-1].year)
+        nomearquivo = coluna1_nomear_arquivo.text_input('Digite um nome para o arquivo de resultados:', nomeprovisorio)
 
         coluna1_salvar, coluna2_salvar, coluna3_salvar = st.columns((2, 2, 6))
-        csv = converter_df_csv(Energia.reset_index())
-        excel = converter_df_excel(Energia.reset_index())
+        csv = converter_df_csv(Resultados.reset_index())
+        excel = converter_df_excel(Resultados.reset_index())
         coluna1_salvar.download_button(label="Download em CSV", data=csv, file_name=nomearquivo + '.csv',
                                         mime='text/csv')
         coluna2_salvar.download_button(label="Download em Excel", data=excel, file_name=nomearquivo + '.xlsx',
                                         mime='application/vnd.ms-excel')
-
-
-        coluna1_nomear_arquivo_2, coluna2_nomear_arquivo_2 = st.columns((3, 2))
-        nomeprovisorio2 = 'Dados de Potência ' + dict_escala_tempo[integralizacao] + 'do Sistema ' + modulo[-3:-1] + '_' + str(Potencia.index[0].year) + '-' + str(Potencia.index[-1].year)
-        nomearquivo2 = coluna1_nomear_arquivo_2.text_input('Digite um nome para o arquivo de potência:', nomeprovisorio2)
-
-        coluna1_salvar_2, coluna2_salvar_2, coluna3_salvar_2 = st.columns((2, 2, 6))
-        csv = converter_df_csv(Potencia.reset_index())
-        excel = converter_df_excel(Potencia.reset_index())
-        coluna1_salvar_2.download_button(label="Download em CSV", data=csv, file_name=nomearquivo2 + '.csv',
-                                       mime='text/csv')
-        coluna2_salvar_2.download_button(label="Download em Excel", data=excel, file_name=nomearquivo2 + '.xlsx',
-                                       mime='application/vnd.ms-excel')
 
     st.write(f'''
                 _________________________________________________________________________
