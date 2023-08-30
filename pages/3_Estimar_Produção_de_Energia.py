@@ -199,7 +199,7 @@ with tabs[2]:
         coluna_resultado_1, coluna_resultado_2, coluna_resultado_3, coluna_resultado_4 = st.columns((2, 2, 2, 2))
         coluna_resultado_1.write('Resultados')
         Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
-        coluna_resultado_1.dataframe(Resuldados)
+        coluna_resultado_1.dataframe(Resultados)
 
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
