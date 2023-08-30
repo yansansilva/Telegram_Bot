@@ -224,7 +224,7 @@ with tabs[2]:
         # Create figure with secondary y-axis
         fig1 = make_subplots(specs=[[{"secondary_y": True}]])
         fig1.add_trace(go.Line(x=Yf.index, y=Yf, name='Produtividade (kWh/kWp)'), secondary_y=False)
-        fig1.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'), secondary_y=True)
+        fig1.add_trace(go.Line(x=PR.index, y=PR, name='Rendimento Global (%)'), secondary_y=True)
 
         fig1.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
