@@ -198,7 +198,7 @@ with tabs[2]:
 
         coluna_resultado_1, coluna_resultado_2, coluna_resultado_3, coluna_resultado_4 = st.columns((2, 2, 2, 2))
         coluna_resultado_1.write('Resultados')
-        Resuldados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], join='outer')
+        Resuldados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
         coluna_resultado_1.dataframe(Resuldados)
 
         # Create figure with secondary y-axis
