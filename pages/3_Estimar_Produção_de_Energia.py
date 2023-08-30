@@ -94,6 +94,7 @@ with tabs[1]:
             dadosAmbienteValidos = dados_ambiente[(dados_ambiente.values != 0).all(axis=1)]
             st.write(dadosAmbienteValidos)
             dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
+            st.write(dadosAmbienteValidos)
             Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             # correspondentes ao zero de irradiância
