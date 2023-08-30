@@ -189,14 +189,16 @@ with tabs[2]:
         PR[PR>100] = 100
 
         if 'min' in periodo:
-            Potencia = potenciaSaida.resample(periodo, label='right', closed='right').mean().dropna()
+            Potencia = potenciaSaida.resample(periodo, label='right', closed='right').mean().dropna()/1000
+            Potencia = Potencia.rename('Potência de saída (kW)')
         else:
-            Potencia = potenciaSaida.resample(periodo).mean().dropna()
+            Potencia = potenciaSaida.resample(periodo).mean().dropna()/1000
+            Potencia = Potencia.rename('Potência de saída (kW)')
         st.write(f'''
                 _________________________________________________________________________
                   ''')
 
-        st.write('## Resultados')
+        st.write('# Resultados')
         Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
         st.dataframe(Resultados)
 
