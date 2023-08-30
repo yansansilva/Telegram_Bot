@@ -45,7 +45,7 @@ tabs = st.tabs(tab_titles)
 dados_modulo, dados_inversor, dadosAmbienteValidos = pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 Iinci, Tambi = [], []
 modulo, inversor, arquivo_modulos, arquivo_inversores, arquivo_ambiente = '', '', '', '',''
-
+st.write(Tambi)
 with tabs[0]:
     st.write("### Upload dos arquivos")
     importar_dados = st.radio('', ('Importar sua própria base de dados', 'Importar base de dados do servidor'),
