@@ -215,9 +215,9 @@ with tabs[2]:
             width=1000, height=400
         )
         # Configurar eixos
-        fig.update_xaxes(title_text="Tempo", rangemode='tozero', font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"))
-        fig.update_yaxes(title_text="Energia (kWh)", secondary_y=False, rangemode='tozero', font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"))
-        fig.update_yaxes(title_text="Irradiação (kWh/m²)", secondary_y=True, rangemode='tozero', font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"))
+        fig.update_xaxes(title_text="Tempo", rangemode='tozero')
+        fig.update_yaxes(title_text="Energia (kWh)", secondary_y=False, rangemode='tozero')
+        fig.update_yaxes(title_text="Irradiação (kWh/m²)", secondary_y=True, rangemode='tozero')
 
         st.plotly_chart(fig)
 
