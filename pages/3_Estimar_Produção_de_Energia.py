@@ -62,10 +62,7 @@ with tabs[0]:
         dados_modulo, dados_inversor, dados_ambiente = import_from_GoogleDrive()
         dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
         st.write(dadosAmbienteValidos)
-        try:
-            dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
-        except:
-            pass
+        dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
         Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
         Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
         # correspondentes ao zero de irradiância
@@ -96,10 +93,7 @@ with tabs[1]:
             dados_ambiente = carregar_dados(arquivo_ambiente, 'Energia').dropna()  # Informações de irradiância e temperatura ambiente
             dadosAmbienteValidos = dados_ambiente[(dados_ambiente.values != 0).all(axis=1)]
             st.write(dadosAmbienteValidos)
-            try:
-                dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
-            except:
-                pass
+            dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'], dayfirst=True)
             Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             # correspondentes ao zero de irradiância
