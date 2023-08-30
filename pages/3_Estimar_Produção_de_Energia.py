@@ -30,7 +30,7 @@ def converter_df_excel(df):
 	worksheet = writer.sheets['Plan1']
 	format1 = workbook.add_format({'num_format': '0.00'})
 	worksheet.set_column('A:A', None, format1)
-	writer.close()
+	writer.close() #writer.save()
 	processed_data = output.getvalue()
 	return processed_data
 
@@ -60,18 +60,14 @@ with tabs[0]:
         arquivo_ambiente = coluna_upload_3.file_uploader('Dados do Ambiente', type=['CSV'])
     else:
         dados_modulo, dados_inversor, dados_ambiente = import_from_GoogleDrive()
-        dadosAmbienteValidos = dados_ambiente[(dados_ambiente.dropna().values != 0).all(axis=1)]
-        st.write(dadosAmbienteValidos)
+        dados_ambiente['Gk'] = pd.to_numeric(dados_ambiente['Gk'], errors='coerce')
+        dados_ambiente['Ta'] = pd.to_numeric(dados_ambiente['Ta'], errors='coerce')
+        dados_ambiente = dados_ambiente.dropna()
+
+        dadosAmbienteValidos = dados_ambiente[(dados_ambiente.values != 0).all(axis=1)]
         dadosAmbienteValidos['Data'] = pd.to_datetime(dadosAmbienteValidos['Data'])
-        st.write(dadosAmbienteValidos)
-        st.write(dadosAmbienteValidos['Gk'].values)
-        st.write(dadosAmbienteValidos['Ta'].values)
         Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
         Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
-        st.write(Iinci)
-        # st.write(Tambi != [])
-        st.write(modulo != '')
-        st.write(inversor != '')
         # correspondentes ao zero de irradiância
     st.write(f'''
             _________________________________________________________________________
@@ -178,14 +174,16 @@ with tabs[2]:
         coluna_integralizacao_1, coluna_integralizacao_2, coluna_integralizacao_3 = st.columns((2, 2, 2))
         tempo = coluna_integralizacao_1.text_input('Período', '1')
         escala_de_tempo = {'Minuto':'min', 'Hora':'h', 'Dia':'d', 'Mês':'M', 'Ano':'y'}
-        integralizacao = coluna_integralizacao_2.selectbox('Escala de tempo', escala_de_tempo)
+        integralizacao = coluna_integralizacao_2.selectbox('Escala de tempo', escala_de_tempo, index=4)
         periodo = tempo + escala_de_tempo[integralizacao]
 
         Energia = potenciaSaida.resample(periodo).sum().dropna()/1000
         Energia = Energia.rename('Energia')
+        Irradiacao = irradiancia.resample(periodo).sum().dropna()/1000
+        Irradiacao = Irradiacao.rename('Irradiação (kWh/m²)')
         Yf = Energia*(1-PCP)/(Pmref/1000) # Produtividade, corrigidas as perdas em cabos e proteções
         Yf = Yf.rename('Yf')
-        PR = Yf[Yf!=0]/(irradiancia.resample(periodo).sum().dropna()/1000)*100
+        PR = Yf[Yf!=0]/(Irradiacao/1)*100
         PR = PR.rename('PR')
         PR[PR>100] = 100
 
@@ -197,20 +195,22 @@ with tabs[2]:
                 _________________________________________________________________________
                   ''')
 
-        coluna_resultado_1, coluna_resultado_2, coluna_resultado_3 = st.columns((2, 2, 3))
-        coluna_resultado_1.write('Energia')
-        coluna_resultado_1.dataframe(irradiancia.resample(periodo).sum().dropna() / 1000)
+        coluna_resultado_1, coluna_resultado_2, coluna_resultado_3, coluna_resultado_4 = st.columns((2, 2, 2, 2))
+        coluna_resultado_1.write('Energia (kWh)')
         coluna_resultado_1.dataframe(Energia)
         coluna_resultado_1.write('Total: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
-        coluna_resultado_2.write('Produtividade')
+        coluna_resultado_2.write('Produtividade (kWh/kWp)')
         coluna_resultado_2.dataframe(Yf)
-        coluna_resultado_3.write('Rendimento Global')
+        coluna_resultado_3.write('Rendimento Global (%)')
         coluna_resultado_3.dataframe(PR.dropna())
+        coluna_resultado_4.write('Irradiação (kWh/m²)')
+        coluna_resultado_4.dataframe(Irradiacao)
 
         fig = go.Figure()
         fig.add_trace(go.Line(x=Energia.index, y=Energia, name='Energia (kWh)'))
         fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'))
         fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'))
+        fig.add_trace(go.Line(x=Irradiacao.index, y=Irradiacao, line=dict(dash='dash'), name='Irradiação (kWh/m²)'))
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
@@ -223,7 +223,7 @@ with tabs[2]:
         fig.update_xaxes(rangemode='tozero')
         fig.update_yaxes(rangemode='tozero')
 
-        coluna_resultado_3.plotly_chart(fig)
+        st.plotly_chart(fig)
 
         st.write("### Salvar Resultados")
 
