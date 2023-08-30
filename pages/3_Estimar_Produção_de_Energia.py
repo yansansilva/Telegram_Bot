@@ -222,11 +222,11 @@ with tabs[2]:
         st.plotly_chart(fig)
 
         # Create figure with secondary y-axis
-        fig = make_subplots(specs=[[{"secondary_y": True}]])
-        fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'), secondary_y=False)
-        fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'), secondary_y=True)
+        fig1 = make_subplots(specs=[[{"secondary_y": True}]])
+        fig1.add_trace(go.Line(x=Yf.index, y=Yf, name='Produtividade (kWh/kWp)'), secondary_y=False)
+        fig1.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'), secondary_y=True)
 
-        fig.update_layout(
+        fig1.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
             font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"),
@@ -235,11 +235,11 @@ with tabs[2]:
             width=1000, height=400
         )
         # Configurar eixos
-        fig.update_xaxes(title_text="Tempo", rangemode='tozero')
-        fig.update_yaxes(title_text="Produtividade (kWh/kWp)", secondary_y=False, rangemode='tozero')
-        fig.update_yaxes(title_text="Rendimento Global (%)", secondary_y=True, rangemode='tozero')
+        fig1.update_xaxes(title_text="Tempo", rangemode='tozero')
+        fig1.update_yaxes(title_text="Produtividade (kWh/kWp)", secondary_y=False, rangemode='tozero')
+        fig1.update_yaxes(title_text="Rendimento Global (%)", secondary_y=True, rangemode='tozero')
 
-        st.plotly_chart(fig)
+        st.plotly_chart(fig1)
 
         st.write("### Salvar Resultados")
 
