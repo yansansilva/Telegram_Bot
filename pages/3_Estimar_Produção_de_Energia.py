@@ -215,9 +215,9 @@ with tabs[2]:
             width=1000, height=400
         )
         # Configurar eixos
-        fig.update_xaxes(title_text="<b>Tempo</b>", rangemode='tozero')
-        fig.update_yaxes(title_text="<b>Energia (kWh)</b>", secondary_y=False, rangemode='tozero')
-        fig.update_yaxes(title_text="<b>Irradiação (kWh/m²)</b>", secondary_y=True, rangemode='tozero')
+        fig.update_xaxes(title_text="Tempo", rangemode='tozero')
+        fig.update_yaxes(title_text="Energia (kWh)", secondary_y=False, rangemode='tozero')
+        fig.update_yaxes(title_text="Irradiação (kWh/m²)", secondary_y=True, rangemode='tozero')
 
         st.plotly_chart(fig)
 
