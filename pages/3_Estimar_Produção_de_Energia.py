@@ -101,6 +101,8 @@ with tabs[1]:
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             st.write(Iinci)
             st.write(Tambi)
+            st.write(modulo)
+            st.write(inversor)
             # correspondentes ao zero de irradiância
         if arquivo_modulos and arquivo_inversores and arquivo_ambiente is not None:
             Pmp, Imp, Vmp, Isc, Voc, TNOC, CIsc, CVoc, Gama, N_mod_serie, N_mod_paralelo = extrair_dados_modulos(dados_modulo, modulo, 'Energia')
