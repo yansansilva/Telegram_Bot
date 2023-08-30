@@ -198,15 +198,16 @@ with tabs[2]:
                 _________________________________________________________________________
                   ''')
 
-        st.write('# Resultados')
+        st.write('## Resultados')
         Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
         st.dataframe(Resultados)
-        st.write('Total: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
+        st.write('Total de Produção de Energia: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
 
+        st.write('### Produção de Energia')
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)'), secondary_y=False)
-        fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação (kWh/m²)'), secondary_y=True)
+        fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação solar (kWh/m²)'), secondary_y=True)
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
@@ -222,6 +223,7 @@ with tabs[2]:
 
         st.plotly_chart(fig)
 
+        st.write('### Figuras de Mérito')
         # Create figure with secondary y-axis
         fig1 = make_subplots(specs=[[{"secondary_y": True}]])
         fig1.add_trace(go.Line(x=Yf.index, y=Yf, name='Produtividade (kWh/kWp)'), secondary_y=False)
