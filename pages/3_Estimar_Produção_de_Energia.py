@@ -205,17 +205,38 @@ with tabs[2]:
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)'), secondary_y=False)
-        fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'), secondary_y=False)
-        fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'), secondary_y=False)
         fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação (kWh/m²)'), secondary_y=True)
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
-            #xaxis_title='FDI = PnomInv/PnomGer',
-            #yaxis_title="Yf (kWh / kWp)",
             font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"),
             showlegend=True,
             #width=500, height=350
+            width=1000, height=400
+        )
+        # Configurar eixos
+        fig.update_xaxes(title_text="<b>Tempo</b>", rangemode='tozero')
+        fig.update_yaxes(title_text="<b>Energia (kWh)</b>", secondary_y=False, rangemode='tozero')
+        fig.update_yaxes(title_text="<b>Irradiação (kWh/m²)</b>", secondary_y=True, rangemode='tozero')
+
+        st.plotly_chart(fig)
+
+        # Create figure with secondary y-axis
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)'), secondary_y=False)
+        fig.add_trace(go.Line(x=Yf.index, y=Yf, line=dict(dash='dash'), name='Produtividade (kWh/kWp)'),
+                      secondary_y=False)
+        fig.add_trace(go.Line(x=PR.index, y=PR, line=dict(dash='dash'), name='Rendimento Global (%)'),
+                      secondary_y=False)
+        fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação (kWh/m²)'), secondary_y=True)
+        fig.update_layout(
+            title=f'Inversor: {inversor} <br> Módulo: {modulo}',
+            title_x=0.5,
+            # xaxis_title='FDI = PnomInv/PnomGer',
+            # yaxis_title="Yf (kWh / kWp)",
+            font=dict(family="Courier New, monospace", size=12, color="RebeccaPurple"),
+            showlegend=True,
+            # width=500, height=350
             width=1000, height=400
         )
         fig.update_xaxes(rangemode='tozero')
