@@ -100,7 +100,7 @@ with tabs[1]:
             Iinci = dadosAmbienteValidos['Gk'].values  # Cria um vetor irradiância Iinci, eliminando os valores nulos
             Tambi = dadosAmbienteValidos['Ta'].values  # Cria um vetor temperatura ambiente Tamb, eliminando os valores
             st.write(Iinci)
-            st.write(Tambi != [])
+            #st.write(Tambi != [])
             st.write(modulo != '')
             st.write(inversor != '')
             # correspondentes ao zero de irradiância
