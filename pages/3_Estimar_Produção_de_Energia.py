@@ -152,7 +152,7 @@ uti_max = 1  # Utiliza o FDI cuja produtividade é máxima para o dimensionament
 FDIi = 0.2
 FDI, EficInv, Yf = [], [], []
 
-if modulo != '' and inversor != '' and Tambi != []:
+if modulo != '' and inversor != '' and Tambi is not []:
     # Função que calcula a potência teórica produzida por um gerador fotovoltaico
     Pmref = N_mod_paralelo * N_mod_serie * Pmp # Potência nominal do gerador fotovoltaico
     Pmei = PMPArranjoFV(Pmref, Iincref, Gama, Tcref, TNOC, Iinci, Tambi)
