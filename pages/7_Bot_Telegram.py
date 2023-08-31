@@ -10,7 +10,7 @@ import pandas as pd
 
 # Define o intervalo de tempo desejado em segundos
 # intervalo_tempo = 70
-intervalo_tempo = 90
+intervalo_tempo = 360
 referencia_consumo = 1350
 
 # Configurações de autenticação do bot Telegram
@@ -64,30 +64,24 @@ def verifica_planilha():
             source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
 
-            horario_atual = datetime.strftime(datetime.now().replace(tzinfo=pytz.utc).astimezone(tz),
-                                              '%Y-%m-%d %H:%M:%S')
-            horario_ultima_linha_rpi = pd.to_datetime(target_sheet['DATA-RPI']).dropna().tail(1).reset_index(drop=True)[
-                0]
+            horario_atual = datetime.strftime(datetime.now().replace(tzinfo=pytz.utc).astimezone(tz),'%Y-%m-%d %H:%M:%S')
+            horario_ultima_linha_rpi = pd.to_datetime(target_sheet['DATA-RPI']).dropna().tail(1).reset_index(drop=True)[0]
             try:
                 horario_ultima_linha_pc = \
                 pd.to_datetime(target_sheet['DATA-PC']).dropna().tail(1).reset_index(drop=True)[0]
                 horario_ultima_linha_pc_debugging = horario_ultima_linha_pc.timestamp()
             except:
                 horario_ultima_linha_pc_debugging = 'PC Desligado!'
-            consumo_ultima_linha = \
-            source_sheet[['Potência Ativa A', 'Potência Ativa B', 'Potência Ativa C']].tail(1).reset_index(
-                drop=True).sum(axis=1)[0]
+            consumo_ultima_linha = source_sheet[['Potência Ativa A', 'Potência Ativa B', 'Potência Ativa C']].tail(1).reset_index(drop=True).sum(axis=1)[0]
             hora_ultimo_consumo = pd.to_datetime(source_sheet['Hora']).dropna().tail(1).reset_index(drop=True)
 
             if horario_ultima_linha_pc_debugging == 'PC Desligado!':
                 rpi_on = datetime.strptime(horario_atual,
                                            '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_rpi.timestamp() <= 300
             else:
-                rpi_on = datetime.strptime(horario_atual,
-                                           '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_rpi.timestamp() <= intervalo_tempo
+                rpi_on = datetime.strptime(horario_atual, '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_rpi.timestamp() <= intervalo_tempo
             try:
-                pc_on = datetime.strptime(horario_atual,
-                                          '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_pc.timestamp() <= intervalo_tempo
+                pc_on = datetime.strptime(horario_atual, '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_pc.timestamp() <= intervalo_tempo
                 consumo_alto = consumo_ultima_linha > referencia_consumo
             except:
                 pc_on = False
@@ -103,17 +97,15 @@ def verifica_planilha():
 
             if horario_ultima_linha_pc_debugging == 'PC Desligado!':
                 if rpi_on:
-                    bot.send_message(chat_id=chat_id[0],
-                                     text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!')
+                    bot.send_message(chat_id=chat_id[0], text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!', timeout=150)
                     if texto != 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
                         texto = 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!'
-                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ ABERTO!')
+                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ ABERTO!', timeout=150)
                 else:
-                    bot.send_message(chat_id=chat_id[0],
-                                     text='PERDA DE CONEXÃO COM A INTERNET!')
+                    bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET!', timeout=150)
                     if texto != 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!':
                         texto = 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
-                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!')
+                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!', timeout=150)
             else:
                 energia = 0
                 if condicao_1:
@@ -137,50 +129,49 @@ def verifica_planilha():
                 if aberto == 1:
                     if energia == 0:
                         # print('O GEDAE ESTÁ ABERTO E TUDO ESTÁ FUNCIONANDO NORMALMENTE!')
-                        bot.send_message(chat_id=chat_id[0], text='O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!')
+                        bot.send_message(chat_id=chat_id[0], text='O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!', timeout=150)
                         if texto != 'O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!' or texto == 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
                             texto = 'O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!'
-                            bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ ABERTO!')
+                            bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ ABERTO!', timeout=150)
                     elif energia == 1:
                         if hora_ultimo_consumo.dt.hour[0] < 18:
                             # print('O GEDAE ESTÁ SEM ENERGIA!')
-                            bot.send_message(chat_id=chat_id[0],
-                                             text='PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA!')
+                            bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA!', timeout=150)
                             if texto != 'PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA!':
                                 texto = 'PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA!'
-                                bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ SEM ENERGIA!')
+                                bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ SEM ENERGIA!', timeout=150)
                         else:
                             # print('O GEDAE ESTÁ FECHADO!')
-                            bot.send_message(chat_id=chat_id[0],
-                                             text='PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!')
+                            bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!', timeout=150)
                             if texto != 'PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!':
                                 texto = 'PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!'
-                                bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!')
+                                bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!', timeout=150)
                     elif energia == 2:
                         # print('O GEDAE ESTÁ ABERTO, MAS HOUVE QUEDA DE ENERGIA. RELIGUE O COMPUTADOR!')
-                        bot.send_message(chat_id=chat_id[0],
-                                         text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!')
+                        bot.send_message(chat_id=chat_id[0], text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!', timeout=150)
                         if texto != 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
                             texto = 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!'
-                            bot.send_message(chat_id=chat_id[1], text='ENERGIA RESTABELECIDA NO GEDAE!')
+                            bot.send_message(chat_id=chat_id[1], text='ENERGIA RESTABELECIDA NO GEDAE!', timeout=150)
                 else:
                     # print('O GEDAE ESTÁ FECHADO!')
-                    bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!')
+                    bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!', timeout=150)
                     if texto != 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!':
                         texto = 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
-                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!')
+                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!', timeout=150)
         except:
-            bot.send_message(chat_id=chat_id[0], text='LIMITE DE LEITURA POR MINUTO EXCEDIDO!')
-            time.sleep(60 - datetime.now(tz).second)
+            bot.send_message(chat_id=chat_id[0], text='LIMITE DE LEITURA POR MINUTO EXCEDIDO!', timeout=150)
+            #time.sleep(60 - datetime.now(tz).second)
             pass
         garantir_execucao_unica = False
 
 
 #if st.button("Iniciar Robô"):
 if st.text_input('Senha: ') == st.secrets['senha']['senha']:
-    # agenda a execução da função a cada 1 minuto
-    time.sleep(60 - datetime.now(tz).second)
-    schedule.every(60).seconds.do(verifica_planilha)
+    # agenda a execução da função a cada 5 minuto
+    while True:
+      if datetime.now(tz).minute/5 == int(datetime.now(tz).minute/5) or datetime.now(tz).minute == 0:
+        break
+    schedule.every(5).minutes.do(verifica_planilha)
 
     texto = ''
     # loop principal para executar o agendador de tarefas
