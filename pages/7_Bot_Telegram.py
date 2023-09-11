@@ -66,6 +66,7 @@ def verifica_planilha():
 
             horario_atual = datetime.strftime(datetime.now().replace(tzinfo=pytz.utc).astimezone(tz),'%Y-%m-%d %H:%M:%S')
             horario_ultima_linha_rpi = pd.to_datetime(target_sheet['DATA-RPI']).dropna().tail(1).reset_index(drop=True)[0]
+            horario_primeira_linha_rpi = pd.to_datetime(target_sheet['DATA-RPI']).dropna().head(1).reset_index(drop=True)[0]
             try:
                 horario_ultima_linha_pc = \
                 pd.to_datetime(target_sheet['DATA-PC']).dropna().tail(1).reset_index(drop=True)[0]
@@ -100,12 +101,12 @@ def verifica_planilha():
                     bot.send_message(chat_id=chat_id[0], text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!', timeout=150)
                     if texto != 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
                         texto = 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!'
-                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ ABERTO!', timeout=150)
+                        bot.send_message(chat_id=chat_id[1], text=f'O GEDAE ESTÁ ABERTO! \nAbriu às {horario_primeira_linha_rpi.time()} do dia {horario_primeira_linha_rpi.date()}.', timeout=150)
                 else:
                     bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET!', timeout=150)
                     if texto != 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!':
                         texto = 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
-                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!', timeout=150)
+                        bot.send_message(chat_id=chat_id[1], text=f'O GEDAE ESTÁ FECHADO! \nFechou às {horario_ultima_linha_rpi.time()} do dia {horario_ultima_linha_rpi.date()}.', timeout=150)
             else:
                 energia = 0
                 if condicao_1:
