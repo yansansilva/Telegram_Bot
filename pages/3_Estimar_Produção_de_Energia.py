@@ -35,6 +35,16 @@ def converter_df_excel(df):
 	processed_data = output.getvalue()
 	return processed_data
 
+def calcular_degradacao(Energia, degradacao_mensal, data_de_instalacao):
+    # Calcular a diferença em meses entre as datas (meses diferentes)
+    listar_meses = 12 * (Energia.index.year - data_de_instalacao.year) + (Energia.index.month - data_de_instalacao.month)
+    mes = pd.DataFrame(listar_meses).set_index(Energia.index)
+    mes[mes < 0] = 0
+    Energia_com_degradacao = Energia * (1 - degradacao_mensal * mes['Data'])
+    Energia_com_degradacao = Energia_com_degradacao.rename('Energia com degradação (kWh)')
+    Energia_com_degradacao[Energia_com_degradacao < 0] = 0
+    return Energia_com_degradacao
+
 tab_titles = [
     'Importar Arquivos',
     'Selecionar os componentes do SFCR',
@@ -199,15 +209,37 @@ with tabs[2]:
                   ''')
 
         st.write('## Resultados')
-        Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
+        considerar_degradacao = st.checkbox('Considerar degradação dos módulos fotovoltaicos')
+        Energia_com_degradacao = 0
+        if considerar_degradacao:
+            escolha = st.radio('Taxa de degradação', options=['Digitar', 'Escolher por tipo de tecnologia'], horizontal=True)
+            if escolha == 'Digitar':
+                degradacao_anual = st.number_input('Informe a taxa anual de degradação (%): ', min_value=0.00, max_value=100.00, value=0.6)/100
+            else:
+                tipos_de_tecnologias = {'Si-m': 0.4, 'Si-p': 0.1, 'Si-mj': 1.5}
+                # Referência da taxa de degradação: https://onlinelibrary.wiley.com/doi/epdf/10.1002/pip.2903
+                tecnologia = st.selectbox('Selecione o tipo de tecnologia do módulo fotovoltaico:', tipos_de_tecnologias)
+                degradacao_anual = tipos_de_tecnologias[tecnologia]/100
+            data_de_instalacao = st.date_input('Informe a data de instalação do SFCR: ', value=Energia.index[0], max_value=Energia.index[-1])
+            degradacao_mensal = degradacao_anual/12
+            Energia_com_degradacao = calcular_degradacao(Energia, degradacao_mensal, data_de_instalacao)
+            Resultados = pd.concat([Potencia, Energia, Energia_com_degradacao, Irradiacao, Yf, PR], axis=1)
+        else:
+            Resultados = pd.concat([Potencia, Energia, Irradiacao, Yf, PR], axis=1)
         st.dataframe(Resultados)
-        st.write('Total de Produção de Energia: ' + '{:.2f}'.format(Energia.sum()) + ' kWh')
+        coluna_Total1, coluna_Total2 = st.columns((2, 2))
+        coluna_Total1.markdown('<b>Total de Produção de Energia:</b> ' + '{:.2f}'.format(Energia.sum()) + ' kWh', unsafe_allow_html=True)
+        if considerar_degradacao:
+            coluna_Total2.markdown('<b>Total de Produção de Energia com degradação:</b> ' + '{:.2f}'.format(Energia_com_degradacao.sum()) + ' kWh', unsafe_allow_html=True)
 
         st.write('### Produção de Energia')
         # Create figure with secondary y-axis
         fig = make_subplots(specs=[[{"secondary_y": True}]])
-        fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)'), secondary_y=False)
-        fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação solar (kWh/m²)'), secondary_y=True)
+        fig.add_trace(go.Bar(x=Energia.index, y=Energia, name='Energia (kWh)', marker_color='blue'), secondary_y=False)
+        if considerar_degradacao:
+            fig.add_trace(go.Bar(x=Energia_com_degradacao.index, y=Energia_com_degradacao, name='Energia com degradação (kWh)', marker_color='orangered'), secondary_y=False)
+        if st.checkbox('Acrescentar no gráfico os dados de irradiação solar (kWh/m²)'):
+            fig.add_trace(go.Bar(x=Irradiacao.index, y=Irradiacao, name='Irradiação solar (kWh/m²)'), secondary_y=True)
         fig.update_layout(
             title=f'Inversor: {inversor} <br> Módulo: {modulo}',
             title_x=0.5,
