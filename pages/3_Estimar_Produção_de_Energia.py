@@ -212,12 +212,13 @@ with tabs[2]:
         considerar_degradacao = st.checkbox('Considerar degradação dos módulos fotovoltaicos')
         Energia_com_degradacao = 0
         if considerar_degradacao:
-            escolha = st.radio('Taxa de degradação', options=['Digitar', 'Escolher por tipo de tecnologia'], horizontal=True)
-            if escolha == 'Digitar':
+            escolha = st.radio('Taxa de degradação', options=['Escolher por tipo de tecnologia', 'Digitar um valor'], horizontal=True)
+            if escolha == 'Digitar um valor':
                 degradacao_anual = st.number_input('Informe a taxa anual de degradação (%): ', min_value=0.00, max_value=100.00, value=0.6)/100
             else:
-                tipos_de_tecnologias = {'Si-m': 0.4, 'Si-p': 0.1, 'Si-mj': 1.5}
+                tipos_de_tecnologias = {'Si-a': 1.32, 'Si-m': 0.4, 'Si-mj': 1.5, 'Si-p': 0.1}
                 # Referência da taxa de degradação: https://onlinelibrary.wiley.com/doi/epdf/10.1002/pip.2903
+                # https://sci-hub.se/https://www.sciencedirect.com/science/article/abs/pii/S0038092X19306413
                 tecnologia = st.selectbox('Selecione o tipo de tecnologia do módulo fotovoltaico:', tipos_de_tecnologias)
                 degradacao_anual = tipos_de_tecnologias[tecnologia]/100
             data_de_instalacao = st.date_input('Informe a data de instalação do SFCR: ', value=Energia.index[0], max_value=Energia.index[-1])
