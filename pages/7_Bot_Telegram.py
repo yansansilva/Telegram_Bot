@@ -70,6 +70,8 @@ def verifica_planilha():
             try:
                 horario_ultima_linha_pc = \
                 pd.to_datetime(target_sheet['DATA-PC']).dropna().tail(1).reset_index(drop=True)[0]
+                horario_primeira_linha_pc = \
+                pd.to_datetime(target_sheet['DATA-PC']).dropna().head(1).reset_index(drop=True)[0]
                 horario_ultima_linha_pc_debugging = horario_ultima_linha_pc.timestamp()
             except:
                 horario_ultima_linha_pc_debugging = 'PC Desligado!'
@@ -133,7 +135,9 @@ def verifica_planilha():
                         bot.send_message(chat_id=chat_id[0], text='O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!', timeout=150)
                         if texto != 'O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!' or texto == 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
                             texto = 'O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!'
-                            bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ ABERTO!', timeout=150)
+                            menor_horario = min([horario_primeira_linha_rpi, horario_primeira_linha_pc])
+                            bot.send_message(chat_id=chat_id[1],
+                                             text=f'O GEDAE ESTÁ ABERTO! \nAbriu às {menor_horario.time()} do dia {menor_horario.strftime("%d/%m/%Y")}.', timeout=150)
                     elif energia == 1:
                         if hora_ultimo_consumo.dt.hour[0] < 18:
                             # print('O GEDAE ESTÁ SEM ENERGIA!')
@@ -146,7 +150,9 @@ def verifica_planilha():
                             bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!', timeout=150)
                             if texto != 'PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!':
                                 texto = 'PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!'
-                                bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!', timeout=150)
+                                maior_horario  = max([horario_ultima_linha_rpi, horario_ultima_linha_pc])
+                                bot.send_message(chat_id=chat_id[1],
+                                                 text=f'O GEDAE ESTÁ FECHADO! \nFechou às {maior_horario.time()} do dia {maior_horario.strftime("%d/%m/%Y")}.', timeout=150)
                     elif energia == 2:
                         # print('O GEDAE ESTÁ ABERTO, MAS HOUVE QUEDA DE ENERGIA. RELIGUE O COMPUTADOR!')
                         bot.send_message(chat_id=chat_id[0], text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!', timeout=150)
@@ -158,9 +164,13 @@ def verifica_planilha():
                     bot.send_message(chat_id=chat_id[0], text='PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!', timeout=150)
                     if texto != 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!':
                         texto = 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
-                        bot.send_message(chat_id=chat_id[1], text='O GEDAE ESTÁ FECHADO!', timeout=150)
+                        maior_horario = max([horario_ultima_linha_rpi, horario_ultima_linha_pc])
+                        bot.send_message(chat_id=chat_id[1],
+                                         text=f'O GEDAE ESTÁ FECHADO! \nFechou às {maior_horario.time()} do dia {maior_horario.strftime("%d/%m/%Y")}.',
+                                         timeout=150)
         except:
-            bot.send_message(chat_id=chat_id[0], text='LIMITE DE LEITURA POR MINUTO EXCEDIDO!', timeout=150)
+            bot.send_message(chat_id=chat_id[0], text=f'''LIMITE DE LEITURA POR MINUTO EXCEDIDO!
+                                        Erro: {str(Exception)}''', timeout=150)
             #time.sleep(60 - datetime.now(tz).second)
             pass
         garantir_execucao_unica = False
