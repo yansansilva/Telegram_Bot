@@ -8,6 +8,8 @@ import telebot
 import pytz
 import pandas as pd
 
+linha = 11
+
 # Define o intervalo de tempo desejado em segundos
 # intervalo_tempo = 70
 intervalo_tempo = 360
@@ -37,6 +39,8 @@ TARGET_SPREADSHEET_ID = planilha[1]
 # Fuso horário brasileiro
 tz = pytz.timezone('America/Sao_Paulo')
 
+linha = 42
+
 def debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging, consumo_ultima_linha,
                      rpi_on, pc_on, consumo_alto, condicao_1, condicao_2, condicao_3):
     print(f''' \n
@@ -61,6 +65,9 @@ def verifica_planilha():
     time.sleep(15)
     if garantir_execucao_unica:
         try:
+          
+            linha = 69
+          
             source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
 
@@ -68,13 +75,22 @@ def verifica_planilha():
             horario_ultima_linha_rpi = pd.to_datetime(target_sheet['DATA-RPI']).dropna().tail(1).reset_index(drop=True)[0]
             horario_primeira_linha_rpi = pd.to_datetime(target_sheet['DATA-RPI']).dropna().head(1).reset_index(drop=True)[0]
             try:
+              
+                linha = 79
+              
                 horario_ultima_linha_pc = \
                 pd.to_datetime(target_sheet['DATA-PC']).dropna().tail(1).reset_index(drop=True)[0]
                 horario_primeira_linha_pc = \
                 pd.to_datetime(target_sheet['DATA-PC']).dropna().head(1).reset_index(drop=True)[0]
                 horario_ultima_linha_pc_debugging = horario_ultima_linha_pc.timestamp()
             except:
+              
+                linha = 88
+              
                 horario_ultima_linha_pc_debugging = 'PC Desligado!'
+              
+            linha = 92
+          
             consumo_ultima_linha = source_sheet[['Potência Ativa A', 'Potência Ativa B', 'Potência Ativa C']].tail(1).reset_index(drop=True).sum(axis=1)[0]
             hora_ultimo_consumo = pd.to_datetime(source_sheet['Hora']).dropna().tail(1).reset_index(drop=True)
 
@@ -84,12 +100,20 @@ def verifica_planilha():
             else:
                 rpi_on = datetime.strptime(horario_atual, '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_rpi.timestamp() <= intervalo_tempo
             try:
+
+                linha = 104
+              
                 pc_on = datetime.strptime(horario_atual, '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_pc.timestamp() <= intervalo_tempo
                 consumo_alto = consumo_ultima_linha > referencia_consumo
             except:
+              
+                linha = 110
+              
                 pc_on = False
                 consumo_alto = False
 
+            linha = 115
+              
             condicao_1 = not rpi_on and not pc_on and consumo_alto
             condicao_2 = not pc_on and (rpi_on or consumo_alto)
             condicao_3 = rpi_on or pc_on or consumo_alto
@@ -110,6 +134,9 @@ def verifica_planilha():
                         texto = 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
                         bot.send_message(chat_id=chat_id[1], text=f'O GEDAE ESTÁ FECHADO! \nFechou às {horario_ultima_linha_rpi.time()} do dia {horario_ultima_linha_rpi.strftime("%d/%m/%Y")}.', timeout=150)
             else:
+              
+                linha = 138
+              
                 energia = 0
                 if condicao_1:
                     energia = 1
@@ -121,6 +148,8 @@ def verifica_planilha():
                     # print('O GEDAE ESTÁ FUNCIONANDO NORMALMENTE!')
                     pass
 
+                linha = 151
+              
                 aberto = 1
                 if condicao_3:
                     # print('O GEDAE ESTÁ ABERTO!')
@@ -129,6 +158,8 @@ def verifica_planilha():
                     aberto = 0
                     # print('O GEDAE ESTÁ FECHADO!')
 
+                linha = 161
+              
                 if aberto == 1:
                     if energia == 0:
                         # print('O GEDAE ESTÁ ABERTO E TUDO ESTÁ FUNCIONANDO NORMALMENTE!')
@@ -170,7 +201,10 @@ def verifica_planilha():
                                          timeout=150)
         except Exception as e:
             bot.send_message(chat_id=chat_id[0], text=f'''LIMITE DE LEITURA POR MINUTO EXCEDIDO!
-Erro: {str(e)}''', timeout=150)
+
+Erro: {str(e)}
+
+Erro na linha: {linha}''', timeout=150)
             #time.sleep(60 - datetime.now(tz).second)
             pass
         garantir_execucao_unica = False
