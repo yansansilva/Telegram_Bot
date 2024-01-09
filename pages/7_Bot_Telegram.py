@@ -170,7 +170,7 @@ def verifica_planilha():
                                          timeout=150)
         except Exception as e:
             bot.send_message(chat_id=chat_id[0], text=f'''LIMITE DE LEITURA POR MINUTO EXCEDIDO!
-                                        Erro: {str(e)}''', timeout=150)
+Erro: {str(e)}''', timeout=150)
             #time.sleep(60 - datetime.now(tz).second)
             pass
         garantir_execucao_unica = False
