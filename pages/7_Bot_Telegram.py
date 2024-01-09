@@ -168,9 +168,9 @@ def verifica_planilha():
                         bot.send_message(chat_id=chat_id[1],
                                          text=f'O GEDAE ESTÁ FECHADO! \nFechou às {maior_horario.time()} do dia {maior_horario.strftime("%d/%m/%Y")}.',
                                          timeout=150)
-        except:
+        except Exception as e:
             bot.send_message(chat_id=chat_id[0], text=f'''LIMITE DE LEITURA POR MINUTO EXCEDIDO!
-                                        Erro: {str(Exception)}''', timeout=150)
+                                        Erro: {str(e)}''', timeout=150)
             #time.sleep(60 - datetime.now(tz).second)
             pass
         garantir_execucao_unica = False
