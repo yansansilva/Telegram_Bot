@@ -69,9 +69,7 @@ def verifica_planilha():
             linha = 69
           
             source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
-            print(source_sheet)
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
-            print(target_sheet)
 
             linha = 74
           
