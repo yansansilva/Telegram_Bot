@@ -61,16 +61,6 @@ def debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_lin
             -----------------------------------------------------------------------------''')
 
 
-# Função para listar todas as planilhas disponíveis
-def listar_google_sheets():
-    sheets = client.openall()  # Lista todas as planilhas disponíveis
-    return sheets
-
-# Função para carregar os dados da planilha mais recente
-def carregar_planilha_mais_recente(sheets):
-    planilha_mais_recente = max(sheets, key=lambda x: x.updated)
-    return planilha_mais_recente.title, planilha_mais_recente.id
-
 # Função que verifica se já passou o intervalo de tempo definido e se houve novas linhas adicionadas na planilha
 def verifica_planilha():
     global texto, garantir_execucao_unica
@@ -79,9 +69,6 @@ def verifica_planilha():
         try:
 
             linha = 69
-
-            sheets = listar_google_sheets()
-            print(carregar_planilha_mais_recente(sheets))
 
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
             source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
