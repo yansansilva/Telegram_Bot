@@ -167,7 +167,8 @@ def verifica_planilha():
 
                 linha = 143
 
-                try:
+                try: #Remover depois
+                    Forçar_erro = source_sheet
                     energia = 0
                     if condicao_1:
                         energia = 1
@@ -240,7 +241,7 @@ def verifica_planilha():
                             bot.send_message(chat_id=chat_id[1],
                                              text=f'O GEDAE ESTÁ FECHADO! \nFechou às {maior_horario.time()} do dia {maior_horario.strftime("%d/%m/%Y")}.',
                                              timeout=150)
-                except:
+                except: #Remover depois
                     if rpi_on:
                         bot.send_message(chat_id=chat_id[0],
                                          text='SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!',
