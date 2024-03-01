@@ -71,9 +71,9 @@ def verifica_planilha():
             linha = 69
 
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
-            try:
+            try: #Remover depois
                 source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
-            except:
+            except: #Remover depois
                 pass
 
             linha = 74
@@ -103,45 +103,48 @@ def verifica_planilha():
                 horario_ultima_linha_pc_debugging = 'PC Desligado!'
 
             linha = 97
-            
-            try:
+
+            try: #Remover depois
                 consumo_ultima_linha = \
                 source_sheet[['Potência Ativa A', 'Potência Ativa B', 'Potência Ativa C']].tail(1).reset_index(
                     drop=True).sum(axis=1)[0]
                 hora_ultimo_consumo = pd.to_datetime(source_sheet['Hora']).dropna().tail(1).reset_index(drop=True)
-    
+            except: #Remover depois
+                pass
+
                 if horario_ultima_linha_pc_debugging == 'PC Desligado!':
                     rpi_on = datetime.strptime(horario_atual,
                                                '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_rpi.timestamp() <= 300
                 else:
                     rpi_on = datetime.strptime(horario_atual,
                                                '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_rpi.timestamp() <= intervalo_tempo
-                try:
-    
+                try: #Remover depois
                     linha = 109
-    
+
                     pc_on = datetime.strptime(horario_atual,
                                               '%Y-%m-%d %H:%M:%S').timestamp() - horario_ultima_linha_pc.timestamp() <= intervalo_tempo
                     consumo_alto = consumo_ultima_linha > referencia_consumo
-                except:
-    
-                    linha = 115
-    
-                    pc_on = False
-                    consumo_alto = False
-    
+                except: #Remover depois
+                    pass
+
+                linha = 115
+
+                pc_on = False
+                consumo_alto = False
+
                 linha = 120
-    
-                condicao_1 = not rpi_on and not pc_on and consumo_alto
-                condicao_2 = not pc_on and (rpi_on or consumo_alto)
-                condicao_3 = rpi_on or pc_on or consumo_alto
-    
-                # Para debbuging do código
-                debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging,
-                                 consumo_ultima_linha,
-                                 rpi_on, pc_on, consumo_alto, condicao_1, condicao_2, condicao_3)
-            except:
-                pass
+
+                try: #Remover depois
+                    condicao_1 = not rpi_on and not pc_on and consumo_alto
+                    condicao_2 = not pc_on and (rpi_on or consumo_alto)
+                    condicao_3 = rpi_on or pc_on or consumo_alto
+
+                    # Para debbuging do código
+                    debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging,
+                                     consumo_ultima_linha,
+                                     rpi_on, pc_on, consumo_alto, condicao_1, condicao_2, condicao_3)
+                except: #Remover depois
+                    pass
 
             if horario_ultima_linha_pc_debugging == 'PC Desligado!':
                 if rpi_on:
@@ -163,7 +166,7 @@ def verifica_planilha():
             else:
 
                 linha = 143
-                
+
                 try:
                     energia = 0
                     if condicao_1:
@@ -175,9 +178,9 @@ def verifica_planilha():
                     else:
                         # print('O GEDAE ESTÁ FUNCIONANDO NORMALMENTE!')
                         pass
-    
+
                     linha = 156
-    
+
                     aberto = 1
                     if condicao_3:
                         # print('O GEDAE ESTÁ ABERTO!')
@@ -185,9 +188,9 @@ def verifica_planilha():
                     else:
                         aberto = 0
                         # print('O GEDAE ESTÁ FECHADO!')
-    
+
                     linha = 166
-    
+
                     if aberto == 1:
                         if energia == 0:
                             # print('O GEDAE ESTÁ ABERTO E TUDO ESTÁ FUNCIONANDO NORMALMENTE!')
@@ -254,7 +257,7 @@ def verifica_planilha():
                             bot.send_message(chat_id=chat_id[1],
                                              text=f'O GEDAE ESTÁ FECHADO! \nFechou às {horario_ultima_linha_rpi.time()} do dia {horario_ultima_linha_rpi.strftime("%d/%m/%Y")}.',
                                              timeout=150)
-                            
+
         except Exception as e:
             bot.send_message(chat_id=chat_id[0], text=f'''Erro: {str(e)}
 
