@@ -69,9 +69,7 @@ def listar_google_sheets():
 # Função para carregar os dados da planilha mais recente
 def carregar_planilha_mais_recente(sheets):
     planilha_mais_recente = max(sheets, key=lambda x: x.updated)
-    data = planilha_mais_recente.sheet1.get_all_records()
-    df = pd.DataFrame(data)
-    return planilha_mais_recente.title, df
+    return planilha_mais_recente.title, planilha_mais_recente.id
 
 # Função que verifica se já passou o intervalo de tempo definido e se houve novas linhas adicionadas na planilha
 def verifica_planilha():
@@ -83,7 +81,7 @@ def verifica_planilha():
             linha = 69
 
             sheets = listar_google_sheets()
-            print(carregar_planilha_mais_recente(sheets)[0])
+            print(carregar_planilha_mais_recente(sheets))
 
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
             source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
