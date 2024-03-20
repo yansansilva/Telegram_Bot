@@ -250,14 +250,14 @@ def verifica_planilha():
 
                 except: #Remover depois
                     if rpi_on:
-                        if texto_admin != 'SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
+                        if texto_admin != 'teste SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!':
                             texto_admin = 'teste SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!'
                             texto_grupo = f'teste O GEDAE ESTÁ ABERTO! \nAbriu às {horario_primeira_linha_rpi.time()} do dia {horario_primeira_linha_rpi.strftime("%d/%m/%Y")}.'
                             enviar_mensagem_grupo(texto_grupo)
                         enviar_mensagem_admin(texto_admin)
                     else:
-                        if texto_admin != 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!':
-                            texto_admin = 'PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
+                        if texto_admin != 'teste PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!':
+                            texto_admin = 'teste PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!'
                             texto_grupo = f'teste O GEDAE ESTÁ FECHADO! \nFechou às {horario_ultima_linha_rpi.time()} do dia {horario_ultima_linha_rpi.strftime("%d/%m/%Y")}.'
                             enviar_mensagem_grupo(texto_grupo)
                         enviar_mensagem_admin(texto_admin)
