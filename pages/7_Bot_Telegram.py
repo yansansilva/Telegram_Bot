@@ -95,14 +95,13 @@ def verifica_planilha():
     global texto_admin, texto_grupo, garantir_execucao_unica
     time.sleep(15)
     if garantir_execucao_unica:
-        target_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
         try:
 
             linha = 85
 
             target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
             try: #Remover depois
-                source_sheet = acessar_planilha_dados_climatizacao()
+                source_sheet = d.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
             except: #Remover depois
                 pass
 
