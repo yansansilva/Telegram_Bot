@@ -55,8 +55,7 @@ intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID
 def acessar_planilha_log_de_conexao():
     return pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
     
-
-linha = 54
+linha = 58
 
 
 def debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging, consumo_ultima_linha,
