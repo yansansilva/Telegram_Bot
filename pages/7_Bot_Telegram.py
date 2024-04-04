@@ -54,8 +54,13 @@ intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID
 @st.cache_resource
 def acessar_planilha_log_de_conexao():
     return pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
-    
-linha = 58
+
+@st.cache_resource
+def acessar_planilha_dados_climatizacao():
+    return pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
+
+
+linha = 63
 
 
 def debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging, consumo_ultima_linha,
@@ -95,8 +100,9 @@ def verifica_planilha():
             linha = 85
 
             target_sheet = acessar_planilha_log_de_conexao()
+            st.write('passou')
             try: #Remover depois
-                source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
+                source_sheet = acessar_planilha_dados_climatizacao()
             except: #Remover depois
                 pass
 
