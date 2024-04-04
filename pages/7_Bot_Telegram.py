@@ -95,12 +95,14 @@ def verifica_planilha():
     global texto_admin, texto_grupo, garantir_execucao_unica
     time.sleep(15)
     if garantir_execucao_unica:
+        target_sheet = acessar_planilha_log_de_conexao()
+        st.write('passou1')
         try:
 
             linha = 85
 
             target_sheet = acessar_planilha_log_de_conexao()
-            st.write('passou')
+            st.write('passou2')
             try: #Remover depois
                 source_sheet = acessar_planilha_dados_climatizacao()
             except: #Remover depois
