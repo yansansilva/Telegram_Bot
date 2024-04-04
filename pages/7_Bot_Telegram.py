@@ -39,12 +39,12 @@ def pre_definicoes():
 
     # identificador das planilhas
     planilha = st.secrets['lista_id_planilha']['id_planilha']
-    SOURCE_SPREADSHEET_ID = planilha[0]
-    TARGET_SPREADSHEET_ID = planilha[1]
+    source_spreadsheet_id = planilha[0]
+    target_spreadsheet_id = planilha[1]
 
     # Fuso horário brasileiro
     tz = pytz.timezone('America/Sao_Paulo')
-    return intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID, TARGET_SPREADSHEET_ID, tz
+    return intervalo_tempo, referencia_consumo, chat_id, bot, client, source_spreadsheet_id, target_spreadsheet_id, tz
 
 intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID, TARGET_SPREADSHEET_ID, tz = pre_definicoes()
 
