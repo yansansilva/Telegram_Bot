@@ -13,7 +13,7 @@ linha = 11
 # ---------------------------------------------------------------------------------------------------------------------
 # INÍCIO DAS PRÉ-DEFINIÇÕES
 
-@st.cache_data
+@st.cache_resource
 def pre_definicoes():
 
     # Define o intervalo de tempo desejado em segundos
