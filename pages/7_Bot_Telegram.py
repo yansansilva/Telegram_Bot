@@ -13,39 +13,45 @@ linha = 11
 # ---------------------------------------------------------------------------------------------------------------------
 # INÍCIO DAS PRÉ-DEFINIÇÕES
 
-# Define o intervalo de tempo desejado em segundos
-# intervalo_tempo = 70
-intervalo_tempo = 360
-referencia_consumo = 1350
+@st.cache
+def pre_definicoes():
 
-# Configurações de autenticação do bot Telegram
-chave = st.secrets["lista_chave"]['list_key']
-bot_token = chave[0]
-chat_id = [chave[1], chave[2]]
+    # Define o intervalo de tempo desejado em segundos
+    # intervalo_tempo = 70
+    intervalo_tempo = 360
+    referencia_consumo = 1350
 
-# Cria uma instância do bot Telegram
-bot = telebot.TeleBot(bot_token)
+    # Configurações de autenticação do bot Telegram
+    chave = st.secrets["lista_chave"]['list_key']
+    bot_token = chave[0]
+    chat_id = [chave[1], chave[2]]
 
-# credenciais do serviço
-SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = st.secrets["gcp_service_account_3"]
+    # Cria uma instância do bot Telegram
+    bot = telebot.TeleBot(bot_token)
 
-# autenticação do serviço
-creds = Credentials.from_service_account_info(SERVICE_ACCOUNT_FILE, scopes=SCOPE, )
-client = gspread.authorize(creds)
+    # credenciais do serviço
+    SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
+    SERVICE_ACCOUNT_FILE = st.secrets["gcp_service_account_3"]
 
-# identificador das planilhas
-planilha = st.secrets['lista_id_planilha']['id_planilha']
-SOURCE_SPREADSHEET_ID = planilha[0]
-TARGET_SPREADSHEET_ID = planilha[1]
+    # autenticação do serviço
+    creds = Credentials.from_service_account_info(SERVICE_ACCOUNT_FILE, scopes=SCOPE, )
+    client = gspread.authorize(creds)
 
-# Fuso horário brasileiro
-tz = pytz.timezone('America/Sao_Paulo')
+    # identificador das planilhas
+    planilha = st.secrets['lista_id_planilha']['id_planilha']
+    SOURCE_SPREADSHEET_ID = planilha[0]
+    TARGET_SPREADSHEET_ID = planilha[1]
+
+    # Fuso horário brasileiro
+    tz = pytz.timezone('America/Sao_Paulo')
+    return intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID, TARGET_SPREADSHEET_ID, tz
+
+intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID, TARGET_SPREADSHEET_ID, tz = pre_definicoes()
 
 # TÉRMINO DAS PRÉ-DEFINIÇÕES
 # ---------------------------------------------------------------------------------------------------------------------
 
-linha = 48
+linha = 54
 
 
 def debugging_codigo(horario_atual, horario_ultima_linha_rpi, horario_ultima_linha_pc_debugging, consumo_ultima_linha,
