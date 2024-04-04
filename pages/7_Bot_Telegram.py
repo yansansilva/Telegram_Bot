@@ -39,17 +39,22 @@ def pre_definicoes():
 
     # identificador das planilhas
     planilha = st.secrets['lista_id_planilha']['id_planilha']
-    source_spreadsheet_id = planilha[0]
-    target_spreadsheet_id = planilha[1]
+    SOURCE_SPREADSHEET_ID = planilha[0]
+    TARGET_SPREADSHEET_ID = planilha[1]
 
     # Fuso horário brasileiro
     tz = pytz.timezone('America/Sao_Paulo')
-    return intervalo_tempo, referencia_consumo, chat_id, bot, client, source_spreadsheet_id, target_spreadsheet_id, tz
+    return intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID, TARGET_SPREADSHEET_ID, tz
 
 intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID, TARGET_SPREADSHEET_ID, tz = pre_definicoes()
 
 # TÉRMINO DAS PRÉ-DEFINIÇÕES
 # ---------------------------------------------------------------------------------------------------------------------
+
+@st.cache_resource
+def acessar_planilha_log_de_conexao():
+    return pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
+    
 
 linha = 54
 
@@ -90,7 +95,7 @@ def verifica_planilha():
 
             linha = 85
 
-            target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
+            target_sheet = acessar_planilha_log_de_conexao()
             try: #Remover depois
                 source_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
             except: #Remover depois
