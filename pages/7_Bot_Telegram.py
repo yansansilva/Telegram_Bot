@@ -51,13 +51,13 @@ intervalo_tempo, referencia_consumo, chat_id, bot, client, SOURCE_SPREADSHEET_ID
 # TÉRMINO DAS PRÉ-DEFINIÇÕES
 # ---------------------------------------------------------------------------------------------------------------------
 
-@st.cache_resource
-def acessar_planilha_log_de_conexao():
-    return pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
+#@st.cache_resource
+#def acessar_planilha_log_de_conexao():
+#    return pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
 
-@st.cache_resource
-def acessar_planilha_dados_climatizacao():
-    return pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
+#@st.cache_resource
+#def acessar_planilha_dados_climatizacao():
+#    return pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
 
 
 linha = 63
@@ -95,14 +95,12 @@ def verifica_planilha():
     global texto_admin, texto_grupo, garantir_execucao_unica
     time.sleep(15)
     if garantir_execucao_unica:
-        target_sheet = acessar_planilha_log_de_conexao()
-        st.write('passou1')
+        target_sheet = pd.DataFrame(client.open_by_key(SOURCE_SPREADSHEET_ID).sheet1.get_all_records())
         try:
 
             linha = 85
 
-            target_sheet = acessar_planilha_log_de_conexao()
-            st.write('passou2')
+            target_sheet = pd.DataFrame(client.open_by_key(TARGET_SPREADSHEET_ID).sheet1.get_all_records())
             try: #Remover depois
                 source_sheet = acessar_planilha_dados_climatizacao()
             except: #Remover depois
