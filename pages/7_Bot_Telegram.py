@@ -63,19 +63,19 @@ def setup() -> Tuple[int, int, list, telebot.TeleBot, gspread.Client, str, str, 
 
 # Função para acessar planilhas
 @st.cache_data(ttl=60)
-def fetch_sheets(client: gspread.Client, source_id: str, target_id: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def fetch_sheets(_client: gspread.Client, source_id: str, target_id: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     logger = logging.getLogger('GEDAE_Monitor')
     logger.debug(f"Acessando planilhas: source_id={source_id}, target_id={target_id}")
     
     try:
-        target_sheet = pd.DataFrame(client.open_by_key(target_id).sheet1.get_all_records())
+        target_sheet = pd.DataFrame(_client.open_by_key(target_id).sheet1.get_all_records())
         logger.debug("Planilha de destino (target) acessada com sucesso")
     except Exception as e:
         logger.error(f"Erro ao acessar planilha de destino: {str(e)}")
         raise
     
     try:
-        source_sheet = pd.DataFrame(client.open_by_key(source_id).sheet1.get_all_records())
+        source_sheet = pd.DataFrame(_client.open_by_key(source_id).sheet1.get_all_records())
         logger.debug("Planilha de origem (source) acessada com sucesso")
     except Exception as e:
         logger.warning(f"Erro ao acessar planilha de origem: {str(e)}. Retornando DataFrame vazio.")
@@ -135,7 +135,7 @@ def get_status_data(target_sheet: pd.DataFrame, source_sheet: pd.DataFrame, tz: 
 def generate_messages_with_ai(status: dict, last_admin_msg: str, last_group_msg: str) -> Tuple[str, str]:
     logger = logging.getLogger('GEDAE_Monitor')
     
-    rpi_on = status['rpi_on |']
+    rpi_on = status['rpi_on']
     pc_on = status['pc_on']
     consumo_alto = status['consumo_alto']
     consumo = status['consumo']
