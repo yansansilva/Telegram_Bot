@@ -84,43 +84,58 @@ def get_status_data(target_sheet: pd.DataFrame, source_sheet: pd.DataFrame, tz: 
         'consumo_alto': consumo_alto
     }
 
-# Função para determinar mensagens
-def determine_messages(status: dict, last_admin_msg: str, last_group_msg: str) -> Tuple[str, str]:
-    rpi_on, pc_on, consumo_alto = status['rpi_on'], status['pc_on'], status['consumo_alto']
-    first_rpi, first_pc, last_rpi, last_pc = status['first_rpi'], status['first_pc'], status['last_rpi'], status['last_pc']
+# Função para gerar mensagens com IA simulada
+def generate_messages_with_ai(status: dict, last_admin_msg: str, last_group_msg: str) -> Tuple[str, str]:
+    rpi_on = status['rpi_on']
+    pc_on = status['pc_on']
+    consumo_alto = status['consumo_alto']
+    consumo = status['consumo']
+    first_rpi = status['first_rpi']
+    last_rpi = status['last_rpi']
+    first_pc = status['first_pc']
+    last_pc = status['last_pc']
     last_consumo_time = status['last_consumo_time']
+    current_time = datetime.strptime(status['current_time'], '%Y-%m-%d %H:%M:%S')
     
-    admin_msg, group_msg = last_admin_msg, last_group_msg
+    # Inicializa mensagens
+    admin_msg = last_admin_msg
+    group_msg = last_group_msg
     
-    if not pc_on:
-        if rpi_on:
-            admin_msg = "SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!"
-            group_msg = f"O GEDAE ESTÁ ABERTO! Abriu às {first_rpi.time()} do dia {first_rpi.strftime('%d/%m/%Y')}."
+    # Análise contextual (simulando IA)
+    if not rpi_on and not pc_on:
+        # Sistema provavelmente offline
+        if consumo_alto:
+            # Alto consumo sem conexão sugere problema
+            admin_msg = f"Alerta: Nenhuma conexão detectada (RPi e PC offline) às {current_time.strftime('%H:%M')}, mas o consumo está elevado ({consumo}W). Verifique o GEDAE imediatamente."
+            group_msg = "Problema detectado: GEDAE sem conexão, mas com consumo alto. Equipe notificada."
         else:
-            admin_msg = "PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!"
-            group_msg = f"O GEDAE ESTÁ FECHADO! Fechou às {last_rpi.time()} do dia {last_rpi.strftime('%d/%m/%Y')}."
+            # Baixo consumo e sem conexão sugere fechamento
+            last_time = max(last_rpi, last_pc) if last_rpi and last_pc else (last_rpi or last_pc)
+            admin_msg = f"Sem conexão com RPi ou PC desde {last_time.strftime('%H:%M')} e consumo baixo ({consumo}W). GEDAE provavelmente fechado."
+            group_msg = f"GEDAE fechado às {last_time.strftime('%H:%M')} do dia {last_time.strftime('%d/%m/%Y')}."
+    
+    elif rpi_on and not pc_on:
+        # Apenas RPi online
+        admin_msg = f"Aviso: Apenas o Raspberry Pi está conectado às {current_time.strftime('%H:%M')}. O PC está offline. Consumo atual: {consumo}W. Religar o PC."
+        group_msg = f"GEDAE aberto desde {first_rpi.strftime('%H:%M')} de {first_rpi.strftime('%d/%m/%Y')}. Problema no PC detectado, equipe notificada."
+    
     else:
-        cond_1 = not rpi_on and not pc_on and consumo_alto
-        cond_2 = not pc_on and (rpi_on or consumo_alto)
-        cond_3 = rpi_on or pc_on or consumo_alto
-        
-        if cond_3:
-            if cond_1 and last_consumo_time and last_consumo_time.hour < 18:
-                admin_msg = "PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA!"
-                group_msg = "O GEDAE ESTÁ SEM ENERGIA!"
-            elif cond_1:
-                admin_msg = "PERDA DE CONEXÃO COM A INTERNET E ALTO CONSUMO DE ENERGIA APÓS AS 18H00!"
-                group_msg = f"O GEDAE ESTÁ FECHADO! Fechou às {max(last_rpi, last_pc).time()} do dia {max(last_rpi, last_pc).strftime('%d/%m/%Y')}."
-            elif cond_2:
-                admin_msg = "SOMENTE O RASPBERRY PI ESTÁ CONECTADO COM A INTERNET, RELIGUE O COMPUTADOR!"
-                group_msg = "ENERGIA RESTABELECIDA NO GEDAE!"
+        # PC online (e possivelmente RPi)
+        if consumo_alto and last_consumo_time:
+            if last_consumo_time.hour < 18:
+                # Alto consumo antes das 18h sugere problema
+                admin_msg = f"Alerta: Consumo elevado ({consumo}W) detectado às {current_time.strftime('%H:%M')}, com RPi {'online' if rpi_on else 'offline'} e PC online. Verificar possível sobrecarga."
+                group_msg = "GEDAE ativo, mas com consumo anormalmente alto. Equipe verificando."
             else:
-                admin_msg = "O COMPUTADOR ESTÁ CONECTADO COM A INTERNET!"
-                menor_horario = min(first_rpi, first_pc)
-                group_msg = f"O GEDAE ESTÁ ABERTO! Abriu às {menor_horario.time()} do dia {menor_horario.strftime('%d/%m/%Y')}."
+                # Alto consumo após 18h sugere fechamento
+                last_time = max(last_rpi, last_pc) if last_rpi and last_pc else (last_rpi or last_pc)
+                admin_msg = f"Consumo elevado ({consumo}W) após 18h às {current_time.strftime('%H:%M')}. GEDAE possivelmente fechado. Última conexão às {last_time.strftime('%H:%M')}."
+                group_msg = f"GEDAE fechado às {last_time.strftime('%H:%M')} do dia {last_time.strftime('%d/%m/%Y')}."
         else:
-            admin_msg = "PERDA DE CONEXÃO COM A INTERNET E BAIXO CONSUMO DE ENERGIA!"
-            group_msg = f"O GEDAE ESTÁ FECHADO! Fechou às {max(last_rpi, last_pc).time()} do dia {max(last_rpi, last_pc).strftime('%d/%m/%Y')}."
+            # Tudo normal
+            first_time = min(first_rpi, first_pc) if first_rpi and first_pc else (first_rpi or first_pc)
+            admin_msg = f"Sistema funcionando normalmente às {current_time.strftime('%H:%M')}. RPi: {'online' if rpi_on else 'offline'}, PC: online, Consumo: {consumo}W."
+            group_msg = f"GEDAE aberto desde {first_time.strftime('%H:%M')} de {first_time.strftime('%d/%m/%Y')}."
     
     return admin_msg, group_msg
 
@@ -142,7 +157,7 @@ def check_system():
     try:
         target_sheet, source_sheet = fetch_sheets(client, source_id, target_id)
         status = get_status_data(target_sheet, source_sheet, tz, intervalo_tempo, referencia_consumo)
-        admin_msg, group_msg = determine_messages(status, last_admin_msg, last_group_msg)
+        admin_msg, group_msg = generate_messages_with_ai(status, last_admin_msg, last_group_msg)
         
         send_messages(bot, chat_ids, admin_msg, group_msg, last_admin_msg, last_group_msg)
         last_admin_msg, last_group_msg = admin_msg, group_msg
@@ -159,12 +174,12 @@ execution_lock = True
 
 # Interface Streamlit
 if st.text_input('Senha: ', type="password") == st.secrets['senha']['senha']:
-    # Sincroniza início nos minutos divisíveis por 5
+    # Sincroniza início no próximo segundo 00
     while True:
         now = datetime.now(tz)
-        if now.minute % 5 == 0:
+        if now.second == 0:
             break
-        time.sleep(1)
+        time.sleep(0.1)  # Checa a cada 0.1 segundo para maior precisão
     
     schedule.every(5).minutes.do(check_system)
     st.write("Robô iniciado!")
@@ -173,4 +188,4 @@ if st.text_input('Senha: ', type="password") == st.secrets['senha']['senha']:
         schedule.run_pending()
         time.sleep(1)
 else:
-    st.write(' Digite a senha!')
+    st.write('Digite a senha!')
