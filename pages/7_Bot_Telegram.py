@@ -21,10 +21,12 @@ def setup() -> Tuple[int, int, list, telebot.TeleBot, gspread.Client, str, str, 
     bot = telebot.TeleBot(chave[0])
     chat_ids = [chave[1], chave[2]]
     
+    # Aut portalocker
+    from portalocker import FileLocker
     # Autenticação Google Sheets
     scope = ['https://www.googleapis.com/auth/spreadsheets']
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account_3"], scopes=scope)
-    client = gspread.authorize(creds)
+    client = gspread.authorize(creds, cache=False)  # Disable caching
     
     # IDs das planilhas
     planilha = st.secrets['lista_id_planilha']['id_planilha']
