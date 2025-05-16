@@ -21,8 +21,6 @@ def setup() -> Tuple[int, int, list, telebot.TeleBot, gspread.Client, str, str, 
     bot = telebot.TeleBot(chave[0])
     chat_ids = [chave[1], chave[2]]
     
-    # Aut portalocker
-    from portalocker import FileLocker
     # Autenticação Google Sheets
     scope = ['https://www.googleapis.com/auth/spreadsheets']
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account_3"], scopes=scope)
@@ -109,17 +107,17 @@ def generate_messages_with_ai(status: dict, last_admin_msg: str, last_group_msg:
         if consumo_alto:
             # Alto consumo sem conexão sugere problema
             admin_msg = f"Alerta: Nenhuma conexão detectada (RPi e PC offline) às {current_time.strftime('%H:%M')}, mas o consumo está elevado ({consumo}W). Verifique o GEDAE imediatamente."
-            group_msg = "Problema detectado: GEDAE sem conexão, mas com consumo alto. Equipe notificada."
+            group_msg = "Problema detectado: GEDAE está sem conexão, mas com consumo alto. Equipe notificada."
         else:
             # Baixo consumo e sem conexão sugere fechamento
             last_time = max(last_rpi, last_pc) if last_rpi and last_pc else (last_rpi or last_pc)
-            admin_msg = f"Sem conexão com RPi ou PC desde {last_time.strftime('%H:%M')} e consumo baixo ({consumo}W). GEDAE provavelmente fechado."
+            admin_msg = f"Sem conexão com RPi ou PC desde {last_time.strftime('%H:%M')} e consumo baixo ({consumo}W). GEDAE está provavelmente fechado."
             group_msg = f"GEDAE fechado às {last_time.strftime('%H:%M')} do dia {last_time.strftime('%d/%m/%Y')}."
     
     elif rpi_on and not pc_on:
         # Apenas RPi online
         admin_msg = f"Aviso: Apenas o Raspberry Pi está conectado às {current_time.strftime('%H:%M')}. O PC está offline. Consumo atual: {consumo}W. Religar o PC."
-        group_msg = f"GEDAE aberto desde {first_rpi.strftime('%H:%M')} de {first_rpi.strftime('%d/%m/%Y')}. Problema no PC detectado, equipe notificada."
+        group_msg = f"GEDAE está aberto desde {first_rpi.strftime('%H:%M')} de {first_rpi.strftime('%d/%m/%Y')}. Problema no PC detectado, equipe notificada."
     
     else:
         # PC online (e possivelmente RPi)
@@ -131,13 +129,13 @@ def generate_messages_with_ai(status: dict, last_admin_msg: str, last_group_msg:
             else:
                 # Alto consumo após 18h sugere fechamento
                 last_time = max(last_rpi, last_pc) if last_rpi and last_pc else (last_rpi or last_pc)
-                admin_msg = f"Consumo elevado ({consumo}W) após 18h às {current_time.strftime('%H:%M')}. GEDAE possivelmente fechado. Última conexão às {last_time.strftime('%H:%M')}."
+                admin_msg = f"Consumo elevado ({ Braunconsumo}W) após 18h às {current_time.strftime('%H:%M')}. GEDAE está possivelmente fechado. Última conexão às {last_time.strftime('%H:%M')}."
                 group_msg = f"GEDAE fechado às {last_time.strftime('%H:%M')} do dia {last_time.strftime('%d/%m/%Y')}."
         else:
             # Tudo normal
             first_time = min(first_rpi, first_pc) if first_rpi and first_pc else (first_rpi or first_pc)
             admin_msg = f"Sistema funcionando normalmente às {current_time.strftime('%H:%M')}. RPi: {'online' if rpi_on else 'offline'}, PC: online, Consumo: {consumo}W."
-            group_msg = f"GEDAE aberto desde {first_time.strftime('%H:%M')} de {first_time.strftime('%d/%m/%Y')}."
+            group_msg = f"GEDAE está aberto desde {first_time.strftime('%H:%M')} de {first_time.strftime('%d/%m/%Y')}."
     
     return admin_msg, group_msg
 
@@ -179,7 +177,7 @@ if st.text_input('Senha: ', type="password") == st.secrets['senha']['senha']:
     # Sincroniza início no próximo segundo 00
     while True:
         now = datetime.now(tz)
-        if now.second == 0:
+        if now.second == 16:
             break
         time.sleep(0.1)  # Checa a cada 0.1 segundo para maior precisão
     
