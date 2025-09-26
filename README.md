@@ -14,16 +14,18 @@ Bot de monitoramento para o GEDAE que:
 Telegram_Bot/
 │
 ├── bot/
-│   ├── __init__.py
-│   ├── main.py          # script principal
-│   ├── config.py        # tokens e configs
-│   ├── handlers.py      # comandos e respostas
-│   └── utils.py         # funções auxiliares
+│ ├── init.py
+│ ├── main.py # ponto de entrada com Streamlit (orquestração)
+│ ├── config.py # configurações globais
+│ ├── sheets.py # acesso às planilhas Google
+│ ├── monitor.py # coleta de status e regras fixas
+│ ├── ai_messages.py # integração com Gemini (mensagens inteligentes)
+│ ├── telegram_bot.py # regras de envio (Admin sempre, Grupo só em mudanças)
+│ ├── utils.py # funções auxiliares
 │
 ├── requirements.txt
-├── .env                 # TELEGRAM_BOT_TOKEN=seu_token_aqui
+├── .env
 └── README.md
-
 
 
 ---
