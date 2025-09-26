@@ -19,26 +19,36 @@ if st.text_input("Senha:", type="password") == st.secrets["senha"]["senha"]:
     def job():
         nonlocal last_admin_msg, last_group_msg
         try:
+            # Lê dados das planilhas
             target_sheet, source_sheet = fetch_sheets(
                 gclient,
                 st.secrets["lista_id_planilha"]["id_planilha"][0],
                 st.secrets["lista_id_planilha"]["id_planilha"][1]
             )
             status = get_status_data(target_sheet, source_sheet)
+
+            # Gera mensagens (IA + fallback)
             admin_msg, group_msg = generate_messages_with_gemini(status, last_admin_msg, last_group_msg)
+
+            # Envia mensagens (regras de envio estão em telegram_bot.py)
             last_admin_msg, last_group_msg = send_messages(admin_msg, group_msg, last_admin_msg, last_group_msg)
+
         except Exception as e:
             logger.error(f"Erro no job: {e}")
 
-    # Sincroniza no segundo 0
+    # Sincroniza com o segundo 0
     while True:
         now = datetime.now(TZ)
-        if now.second == 0: break
+        if now.second == 0:
+            break
         time.sleep(0.1)
 
-    schedule.every(5).minutes.do(job)
+    # Executa job a cada 1 minuto
+    schedule.every(1).minutes.do(job)
+
     while True:
         schedule.run_pending()
         time.sleep(1)
+
 else:
     st.warning("Digite a senha!")
