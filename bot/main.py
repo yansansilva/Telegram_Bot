@@ -14,10 +14,13 @@ if st.text_input("Senha:", type="password") == st.secrets["senha"]["senha"]:
     logger.info("Senha correta. Iniciando monitoramento.")
     st.success("Robô iniciado!")
 
-    last_admin_msg, last_group_msg = "", ""
+    # Inicializa variáveis de estado persistentes no Streamlit
+    if "last_admin_msg" not in st.session_state:
+        st.session_state.last_admin_msg = ""
+    if "last_group_msg" not in st.session_state:
+        st.session_state.last_group_msg = ""
 
     def job():
-        nonlocal last_admin_msg, last_group_msg
         try:
             # Lê dados das planilhas
             target_sheet, source_sheet = fetch_sheets(
@@ -27,16 +30,24 @@ if st.text_input("Senha:", type="password") == st.secrets["senha"]["senha"]:
             )
             status = get_status_data(target_sheet, source_sheet)
 
-            # Gera mensagens (IA + fallback)
-            admin_msg, group_msg = generate_messages_with_gemini(status, last_admin_msg, last_group_msg)
+            # Gera mensagens (IA + fallback fixo)
+            admin_msg, group_msg = generate_messages_with_gemini(
+                status,
+                st.session_state.last_admin_msg,
+                st.session_state.last_group_msg
+            )
 
-            # Envia mensagens (regras de envio estão em telegram_bot.py)
-            last_admin_msg, last_group_msg = send_messages(admin_msg, group_msg, last_admin_msg, last_group_msg)
+            # Envia mensagens
+            st.session_state.last_admin_msg, st.session_state.last_group_msg = send_messages(
+                admin_msg, group_msg,
+                st.session_state.last_admin_msg,
+                st.session_state.last_group_msg
+            )
 
         except Exception as e:
             logger.error(f"Erro no job: {e}")
 
-    # Sincroniza com o segundo 0
+    # Sincroniza com o segundo 0 antes de iniciar
     while True:
         now = datetime.now(TZ)
         if now.second == 0:
@@ -46,6 +57,7 @@ if st.text_input("Senha:", type="password") == st.secrets["senha"]["senha"]:
     # Executa job a cada 1 minuto
     schedule.every(1).minutes.do(job)
 
+    # Loop principal
     while True:
         schedule.run_pending()
         time.sleep(1)
