@@ -1,15 +1,11 @@
-import os
 import logging
 import logging.handlers
 import pytz
 import telebot
 import gspread
 from google.oauth2.service_account import Credentials
-from dotenv import load_dotenv
+import streamlit as st
 import google.generativeai as genai
-
-# Carrega variáveis do .env
-load_dotenv()
 
 # Setup logging
 logger = logging.getLogger("GEDAE_Monitor")
@@ -27,23 +23,19 @@ REFERENCIA_CONSUMO = 1350
 TZ = pytz.timezone("America/Sao_Paulo")
 
 # Telegram
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_ADMIN_ID = os.getenv("TELEGRAM_ADMIN_ID")
-TELEGRAM_GROUP_ID = os.getenv("TELEGRAM_GROUP_ID")
+TELEGRAM_TOKEN = st.secrets["general"]["TELEGRAM_BOT_TOKEN"]
+TELEGRAM_ADMIN_ID = st.secrets["general"]["TELEGRAM_ADMIN_ID"]
+TELEGRAM_GROUP_ID = st.secrets["general"]["TELEGRAM_GROUP_ID"]
 bot = telebot.TeleBot(TELEGRAM_TOKEN) if TELEGRAM_TOKEN else None
 
 # Google Sheets
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-SERVICE_ACCOUNT_INFO = os.getenv("GCP_SERVICE_ACCOUNT_JSON")
+SERVICE_ACCOUNT_INFO = st.secrets["general"]["GCP_SERVICE_ACCOUNT_JSON"]
 
-if SERVICE_ACCOUNT_INFO:
-    creds = Credentials.from_service_account_info(eval(SERVICE_ACCOUNT_INFO), scopes=SCOPES)
-    gclient = gspread.authorize(creds)
-else:
-    gclient = None
+creds = Credentials.from_service_account_info(eval(SERVICE_ACCOUNT_INFO), scopes=SCOPES)
+gclient = gspread.authorize(creds)
 
 # Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-GEMINI_STYLE = os.getenv("GEMINI_STYLE", "tecnico")
+GEMINI_API_KEY = st.secrets["general"]["GEMINI_API_KEY"]
+genai.configure(api_key=GEMINI_API_KEY)
+GEMINI_STYLE = st.secrets["general"].get("GEMINI_STYLE", "tecnico")
