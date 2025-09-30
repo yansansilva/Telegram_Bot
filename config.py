@@ -30,7 +30,7 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN) if TELEGRAM_TOKEN else None
 
 # Google Sheets
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-SERVICE_ACCOUNT_INFO = st.secrets["general"]["GCP_SERVICE_ACCOUNT_JSON"]
+SERVICE_ACCOUNT_INFO = st.secrets["GCP_SERVICE_ACCOUNT_JSON"]
 
 print(SERVICE_ACCOUNT_INFO)
 
