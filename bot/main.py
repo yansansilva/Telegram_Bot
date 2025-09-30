@@ -1,11 +1,11 @@
 import streamlit as st
 import time, schedule
 from datetime import datetime
-from .config import logger, gclient, TZ
-from .sheets import fetch_sheets
-from .monitor import get_status_data
-from .ai_messages import generate_messages_with_gemini
-from .telegram_bot import send_messages
+from config import logger, gclient, TZ
+from sheets import fetch_sheets
+from monitor import get_status_data
+from ai_messages import generate_messages_with_gemini
+from telegram_bot import send_messages
 
 st.set_page_config(page_title="GEDAE Alerta Bot Telegram", page_icon="🤖", layout="wide")
 st.title("GEDAE Alerta")
