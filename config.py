@@ -32,6 +32,8 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN) if TELEGRAM_TOKEN else None
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 SERVICE_ACCOUNT_INFO = st.secrets["general"]["GCP_SERVICE_ACCOUNT_JSON"]
 
+print(SERVICE_ACCOUNT_INFO)
+
 creds = Credentials.from_service_account_info(eval(SERVICE_ACCOUNT_INFO), scopes=SCOPES)
 gclient = gspread.authorize(creds)
 
