@@ -1,4 +1,4 @@
-from bot.config import bot, TELEGRAM_ADMIN_ID, TELEGRAM_GROUP_ID, logger
+from config import bot, TELEGRAM_ADMIN_ID, TELEGRAM_GROUP_ID, logger
 
 def send_messages(admin_msg, group_msg, last_admin_msg, last_group_msg):
     if not bot:
