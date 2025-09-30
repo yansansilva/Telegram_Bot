@@ -1,5 +1,5 @@
 import pandas as pd
-from bot.config import logger
+from config import logger
 
 def fetch_sheets(client, source_id: str, target_id: str):
     logger.debug(f"Acessando planilhas: source={source_id}, target={target_id}")
