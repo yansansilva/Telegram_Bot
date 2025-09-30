@@ -4,5 +4,4 @@ gspread
 google-auth
 pandas
 pyTelegramBotAPI
-python-dotenv
 google-generativeai
